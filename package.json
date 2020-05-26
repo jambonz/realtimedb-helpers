@@ -1,14 +1,22 @@
 {
   "name": "@jambonz/realtimedb-helpers",
   "version": "0.2.14",
-  "description": "",
+  "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test node test/ | ./node_modules/.bin/tap-spec",
-    "coverage": "./node_modules/.bin/nyc --reporter html --report-dir ./coverage npm run test",
+    "coverage": "nyc --reporter html --report-dir ./coverage npm run test",
     "jslint": "eslint app.js lib"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jambonz/realtimedb-helpers.git"
+  },
   "author": "Dave Horton",
+  "bugs": {
+    "url": "https://github.com/jambonz/realtimedb-helpers/issues"
+  },
+  "homepage": "https://github.com/jambonz/realtimedb-helpers#readme",
   "license": "MIT",
   "dependencies": {
     "@google-cloud/text-to-speech": "^2.2.0",
@@ -27,5 +35,16 @@
     "tap-dot": "^2.0.0",
     "tap-spec": "^5.0.0",
     "tape": "^4.13.2"
-  }
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "keywords": [
+    "jambonz",
+    "drachtio",
+    "sip",
+    "voip",
+    "cpaas"
+  ]
 }
