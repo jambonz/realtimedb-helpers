@@ -1,6 +1,6 @@
 {
   "name": "@jambonz/realtimedb-helpers",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
@@ -19,12 +19,12 @@
   "homepage": "https://github.com/jambonz/realtimedb-helpers#readme",
   "license": "MIT",
   "dependencies": {
+    "@jambonz/stats-collector": "0.0.4",
     "@google-cloud/text-to-speech": "^2.2.0",
     "aws-sdk": "^2.631.0",
     "bluebird": "^3.7.2",
     "debug": "^4.1.1",
     "fs-extra": "^8.1.0",
-    "jambonz-stats-collector": "0.0.3",
     "redis": "^2.8.0"
   },
   "devDependencies": {

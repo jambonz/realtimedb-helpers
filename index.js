@@ -1,7 +1,7 @@
 const {noopLogger} = require('./lib/utils');
 const bluebird = require('bluebird');
 const redis = require('redis');
-const StatsCollector = require('jambonz-stats-collector');
+const StatsCollector = require('@jambonz/stats-collector');
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 
