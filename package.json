@@ -1,6 +1,6 @@
 {
   "name": "@jambonz/realtimedb-helpers",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "@jambonz/stats-collector": "0.0.4",
-    "@google-cloud/text-to-speech": "^2.2.0",
+    "@google-cloud/text-to-speech": "^3.1.1",
     "aws-sdk": "^2.631.0",
     "bluebird": "^3.7.2",
     "debug": "^4.1.1",
@@ -29,12 +29,12 @@
   },
   "devDependencies": {
     "config": "^3.3.1",
-    "eslint": "^6.8.0",
+    "eslint": "^7.10.0",
     "eslint-plugin-promise": "^4.2.1",
-    "nyc": "^15.0.1",
+    "nyc": "^15.1.0",
     "tap-dot": "^2.0.0",
     "tap-spec": "^5.0.0",
-    "tape": "^4.13.2"
+    "tape": "^5.0.1"
   },
   "directories": {
     "lib": "lib",
