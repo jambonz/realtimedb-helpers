@@ -1,4 +1,4 @@
-# jambonz-realtimedb-helpers  [![Build Status](https://secure.travis-ci.org/jambonz/jambonz-realtimedb-helpers.png)](http://travis-ci.org/jambonz/jambonz-realtimedb-helpers)
+# jambonz-realtimedb-helpers ![CI](https://github.com/jambonz/realtimedb-helpers/workflows/CI/badge.svg)
 
 
 A set of helper functions to access data in the jambonz in-memory database (currently implemented using redis).
