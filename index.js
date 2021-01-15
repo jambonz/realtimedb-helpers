@@ -34,6 +34,8 @@ module.exports = function(opts, logger) {
     addKey: require('./lib/key/add-key').bind(null, client, logger),
     retrieveKey: require('./lib/key/retrieve-key').bind(null, client, logger),
     deleteKey: require('./lib/key/delete-key').bind(null, client, logger),
+    incrKey: require('./lib/key/incr').bind(null, client, logger),
+    decrKey: require('./lib/key/decr').bind(null, client, logger),
     pushBack: require('./lib/list/push-back').bind(null, client, logger),
     lengthOfList: require('./lib/list/length').bind(null, client, logger),
     getListPosition: require('./lib/list/position').bind(null, client, logger),

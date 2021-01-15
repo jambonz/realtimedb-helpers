@@ -8,7 +8,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 test('key tests', async(t) => {
   const fn = require('..');
-  const {addKey, deleteKey, retrieveKey, client} = fn(opts);
+  const {addKey, deleteKey, retrieveKey, incrKey, decrKey, client} = fn(opts);
 
   try {
     let result = await addKey('akey', 'value');
@@ -21,6 +21,21 @@ test('key tests', async(t) => {
 
     await deleteKey('akey');
     await deleteKey('bkey');
+
+    result = await incrKey('mykey');
+    t.ok(result === 1, 'incrKey initializes to zero if not there');
+
+    result = await incrKey('mykey');
+    t.ok(result === 2, 'incrKey increments key with no expires');
+
+    result = await decrKey('mykey');
+    t.ok(result === 1, 'decrKey works properly when key exists');
+  
+    result = await decrKey('nokey');
+    t.ok(result === -1, 'decrKey returns -1 when key did not exist');
+
+    result = await incrKey('mykey-now', 1);
+    t.ok(result === 1, 'incrKey increments key with expires');
 
     t.end();
 
