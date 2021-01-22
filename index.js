@@ -1,9 +1,7 @@
 const {noopLogger} = require('./lib/utils');
-const bluebird = require('bluebird');
-const redis = require('redis');
+const promisify = require('@jambonz/promisify-redis');
+const redis = promisify(require('redis'));
 const StatsCollector = require('@jambonz/stats-collector');
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
 
 module.exports = function(opts, logger) {
   logger = logger || noopLogger;
