@@ -1,6 +1,6 @@
 {
   "name": "@jambonz/realtimedb-helpers",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "@jambonz/stats-collector": "^0.1.5",
     "aws-sdk": "^2.840.0",
     "debug": "^4.3.1",
-    "redis": "^2.8.0"
+    "redis": "^3.0.0"
   },
   "devDependencies": {
     "config": "^3.3.3",
