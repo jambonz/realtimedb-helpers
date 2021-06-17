@@ -4,7 +4,7 @@
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test node test/ | ./node_modules/.bin/tap-spec",
+    "test": "NODE_ENV=test node test/ ",
     "coverage": "nyc --reporter html --report-dir ./coverage npm run test",
     "jslint": "eslint index.js lib"
   },
@@ -31,7 +31,6 @@
     "eslint": "^7.19.0",
     "eslint-plugin-promise": "^4.2.1",
     "nyc": "^15.1.0",
-    "tap-spec": "^5.0.0",
     "tape": "^5.1.1"
   },
   "directories": {
