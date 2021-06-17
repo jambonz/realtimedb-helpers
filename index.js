@@ -21,6 +21,7 @@ module.exports = function(opts, logger) {
     retrieveCall: require('./lib/retrieve-call').bind(null, client, logger),
     deleteCall: require('./lib/delete-call').bind(null, client, logger),
     listCalls: require('./lib/list-calls').bind(null, client, logger),
+    listQueues: require('./lib/list-queues').bind(null, client, logger),
     purgeCalls: require('./lib/purge-calls').bind(null, client, logger),
     synthAudio: require('./lib/synth-audio').bind(null, client, logger, stats),
     createSet: require('./lib/set/create-set').bind(null, client, logger),

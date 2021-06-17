@@ -5,4 +5,5 @@ require('./list');
 require('./set');
 require('./hash');
 require('./key');
+require('./queues');
 require('./docker_stop');
