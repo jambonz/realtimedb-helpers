@@ -1,7 +1,6 @@
 const {noopLogger} = require('./lib/utils');
 const promisify = require('@jambonz/promisify-redis');
 const redis = promisify(require('redis'));
-const StatsCollector = require('@jambonz/stats-collector');
 
 module.exports = function(opts, logger) {
   logger = logger || noopLogger;
@@ -13,8 +12,6 @@ module.exports = function(opts, logger) {
       });
     });
 
-  const stats = new StatsCollector(logger);
-
   return {
     client,
     updateCallStatus: require('./lib/update-call-status').bind(null, client, logger),
@@ -23,11 +20,12 @@ module.exports = function(opts, logger) {
     listCalls: require('./lib/list-calls').bind(null, client, logger),
     listQueues: require('./lib/list-queues').bind(null, client, logger),
     purgeCalls: require('./lib/purge-calls').bind(null, client, logger),
-    synthAudio: require('./lib/synth-audio').bind(null, client, logger, stats),
+    synthAudio: require('./lib/synth-audio').bind(null, client, logger),
     createSet: require('./lib/set/create-set').bind(null, client, logger),
     addToSet: require('./lib/set/add-to-set').bind(null, client, logger),
     removeFromSet: require('./lib/set/remove-from-set').bind(null, client, logger),
-    retrieveSet: require('./lib/retrieve-set').bind(null, client, logger),
+    retrieveSet: require('./lib/set/retrieve-set').bind(null, client, logger),
+    monitorSet: require('./lib/set/monitor-set').bind(null, client, logger),
     createHash: require('./lib/hash/create-hash').bind(null, client, logger),
     retrieveHash: require('./lib/hash/retrieve-hash').bind(null, client, logger),
     addKey: require('./lib/key/add-key').bind(null, client, logger),
