@@ -2,19 +2,25 @@ const test = require('tape').test ;
 const config = require('config');
 const opts = config.get('redis');
 const fs = require('fs');
+const logger = require('pino')();
 
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
 
+const stats = {
+  increment: () => {},
+  histogram: () => {}
+};
+
 test('speech synth tests', async(t) => {
   const fn = require('..');
-  const {synthAudio, client} = fn(opts);
+  const {synthAudio, client} = fn(opts, logger);
 
   if (!process.env.GCP_FILE ||
-    !process.env.ACCESS_KEY_ID ||
-    !process.env.SECRET_ACCESS_KEY ||
-    !process.env.REGION) {
+    !process.env.AWS_ACCESS_KEY_ID ||
+    !process.env.AWS_SECRET_ACCESS_KEY ||
+    !process.env.AWS_REGION) {
       t.pass('skipping speech synth tests since no credentials provided');
       t.end();
       client.quit();
@@ -22,7 +28,7 @@ test('speech synth tests', async(t) => {
   }
   try {
     const creds = JSON.parse(fs.readFileSync(process.env.GCP_FILE));
-    let opts = await synthAudio({
+    let opts = await synthAudio(stats, {
       vendor: 'google',
       credentials: {
         credentials: {
@@ -37,7 +43,7 @@ test('speech synth tests', async(t) => {
     });
     t.ok(!opts.servedFromCache, `successfully synthesized non-cached google audio to ${opts.filepath}`);
   
-    opts = await synthAudio({
+    opts = await synthAudio(stats,{
       vendor: 'google',
       credentials: {
         credentials: {
@@ -49,35 +55,90 @@ test('speech synth tests', async(t) => {
       gender: 'MALE', 
       text: 'This is a test.  This is only a test'
     });
-    t.ok(opts.servedFromCache, `successfully synthesized cached google audio to ${opts.filepath}`);
+    t.ok(opts.servedFromCache, `successfully synthesized cached google audio to ${opts.filePath}`);
 
-    opts = await synthAudio({
+    opts = await synthAudio(stats, {
       vendor: 'aws',
       credentials: {
-        accessKeyId: process.env.ACCESS_KEY_ID,
-        secretAccessKey: process.env.SECRET_ACCESS_KEY,
-        region: process.env.REGION
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: process.env.AWS_REGION
       },
       language: 'en-US',
       voice: 'Amy', 
       text: 'This is a test.  This is only a test'
     });
-    t.ok(!opts.servedFromCache, `successfully synthesized non-cached aws audio to ${opts.filepath}`);
+    t.ok(!opts.servedFromCache, `successfully synthesized non-cached aws audio to ${opts.filePath}`);
 
-    opts = await synthAudio({
+    opts = await synthAudio(stats, {
       vendor: 'aws',
       credentials: {
-        accessKeyId: process.env.ACCESS_KEY_ID,
-        secretAccessKey: process.env.SECRET_ACCESS_KEY,
-        region: process.env.REGION
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        region: process.env.AWS_REGION
       },
       language: 'en-US',
       voice: 'Amy', 
       text: 'This is a test.  This is only a test'
     });
-    t.ok(opts.servedFromCache, `successfully synthesized cached aws audio to ${opts.filepath}`);
+    t.ok(opts.servedFromCache, `successfully synthesized cached aws audio to ${opts.filePath}`);
 
-    await client.flushallAsync();
+    const longText = `Henry is best known for his six marriages, including his efforts to have his first marriage 
+    (to Catherine of Aragon) annulled. His disagreement with Pope Clement VII about such an 
+    annulment led Henry to initiate the English Reformation, 
+    separating the Church of England from papal authority. He appointed himself Supreme Head of the Church of England 
+    and dissolved convents and monasteries, for which he was excommunicated. 
+    Henry is also known as "the father of the Royal Navy," as he invested heavily in the navy, 
+    increasing its size from a few to more than 50 ships, and established the Navy Board.`;
+
+    opts = await synthAudio(stats, {
+      vendor: 'microsoft',
+      credentials: {
+        apiKey: process.env.MICROSOFT_API_KEY,
+        region: process.env.MICROSOFT_REGION
+      },
+      language: 'en-US-ChristopherNeural',
+      voice: 'en-US-ChristopherNeural', 
+      text: longText
+    });
+    t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
+
+
+    opts = await synthAudio(stats, {
+      vendor: 'microsoft',
+      credentials: {
+        apiKey: process.env.MICROSOFT_API_KEY,
+        region: process.env.MICROSOFT_REGION
+      },
+      language: 'en-US-ChristopherNeural',
+      voice: 'en-US-ChristopherNeural', 
+      text: longText
+    });
+    t.ok(opts.servedFromCache, `successfully retrieved microsoft audio from cache ${opts.filePath}`);
+
+    const ssml = `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
+    <voice name="en-US-JennyNeural">
+    <prosody volume="loud">Hi there,</prosody> and welcome to jambones! 
+    jambones is the <sub alias="seapass">CPaaS</sub> designed with the needs of communication service providers in mind.
+    This is an example of simple text-to-speech, but there is so much more you can do.
+    Try us out!
+    </voice>
+    </speak>`;
+
+opts = await synthAudio(stats, {
+  vendor: 'microsoft',
+  credentials: {
+    apiKey: process.env.MICROSOFT_API_KEY,
+    region: process.env.MICROSOFT_REGION
+  },
+  language: 'en-US-ChristopherNeural',
+  voice: 'en-US-ChristopherNeural', 
+  text: ssml
+});
+
+t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
+
+await client.flushallAsync();
 
     t.end();
 
