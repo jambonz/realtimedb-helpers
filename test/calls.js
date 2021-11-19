@@ -132,7 +132,7 @@ test('calls tests', async(t) => {
 
     await client.flushallAsync();
 
-    for( let i = 0; i < 10000; i++) {
+    for( let i = 0; i < 1000; i++) {
       await updateCallStatus({
         callSid: `callSid-${i}`,
         accountSid: 'account-1',
@@ -141,13 +141,13 @@ test('calls tests', async(t) => {
         callStatus: 'trying'
       }, 'http://127.0.0.1:3000');
     }
-    t.pass('successfully added 10,000 calls');
+    t.pass('successfully added 1,000 calls');
 
     count = await purgeCalls();
     t.ok(count === 0, 'no calls purged');
 
     calls = await listCalls('account-1');
-    t.ok(calls.length === 10000, 'successfully retrieved all 10,000 calls');
+    t.ok(calls.length === 1000, 'successfully retrieved all 1,000 calls');
 
     await client.flushallAsync();
 
