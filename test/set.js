@@ -8,7 +8,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 test('set tests', async(t) => {
   const fn = require('..');
-  const {createSet, retrieveSet, addToSet, removeFromSet, client} = fn(opts);
+  const {createSet, retrieveSet, addToSet, removeFromSet, isMemberOfSet, client} = fn(opts);
 
   try {
     const set1 = new Set();
@@ -33,6 +33,12 @@ test('set tests', async(t) => {
     count = await addToSet('sbcList-1', ['10.10.10.6', '10.10.10.7']);
     t.ok(count === 2, 'addToSet adds an array as member');
 
+    let exists = await isMemberOfSet('sbcList-1', '10.10.10.6');
+    t.ok(exists, 'isMemberOfSet returns true when key exists in set');
+    
+    exists = await isMemberOfSet('sbcList-1', '10.10.10.99');
+    t.ok(!exists, 'isMemberOfSet returns false when key does not exist in set');
+    
     const set3 = new Set();
     set3.add('10.10.10.8');
     set3.add('10.10.10.9');

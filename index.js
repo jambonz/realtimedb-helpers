@@ -26,6 +26,7 @@ module.exports = function(opts, logger) {
     removeFromSet: require('./lib/set/remove-from-set').bind(null, client, logger),
     retrieveSet: require('./lib/set/retrieve-set').bind(null, client, logger),
     monitorSet: require('./lib/set/monitor-set').bind(null, client, logger),
+    isMemberOfSet: require('./lib/set/is-member-of-set').bind(null, client, logger),
     createHash: require('./lib/hash/create-hash').bind(null, client, logger),
     retrieveHash: require('./lib/hash/retrieve-hash').bind(null, client, logger),
     addKey: require('./lib/key/add-key').bind(null, client, logger),
