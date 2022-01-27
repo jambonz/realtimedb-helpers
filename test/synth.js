@@ -18,9 +18,12 @@ test('speech synth tests', async(t) => {
   const {synthAudio, client} = fn(opts, logger);
 
   if (!process.env.GCP_FILE ||
+    !process.env.MICROSOFT_API_KEY ||
+    !process.env.MICROSOFT_REGION ||
     !process.env.AWS_ACCESS_KEY_ID ||
     !process.env.AWS_SECRET_ACCESS_KEY ||
-    !process.env.AWS_REGION) {
+    !process.env.AWS_REGION ||
+    !process.env.WELLSAID_API_KEY) {
       t.pass('skipping speech synth tests since no credentials provided');
       t.end();
       client.quit();
@@ -41,7 +44,7 @@ test('speech synth tests', async(t) => {
       text: 'This is a test.  This is only a test',
       salt: 'foo.bar'
     });
-    t.ok(!opts.servedFromCache, `successfully synthesized non-cached google audio to ${opts.filepath}`);
+    t.ok(!opts.servedFromCache, `successfully synthesized google audio to ${opts.filepath}`);
   
     opts = await synthAudio(stats,{
       vendor: 'google',
@@ -55,7 +58,7 @@ test('speech synth tests', async(t) => {
       gender: 'MALE', 
       text: 'This is a test.  This is only a test'
     });
-    t.ok(opts.servedFromCache, `successfully synthesized cached google audio to ${opts.filePath}`);
+    t.ok(opts.servedFromCache, `successfully retrieved cached google audio from ${opts.filePath}`);
 
     opts = await synthAudio(stats, {
       vendor: 'aws',
@@ -68,7 +71,7 @@ test('speech synth tests', async(t) => {
       voice: 'Amy', 
       text: 'This is a test.  This is only a test'
     });
-    t.ok(!opts.servedFromCache, `successfully synthesized non-cached aws audio to ${opts.filePath}`);
+    t.ok(!opts.servedFromCache, `successfully synthesized aws audio to ${opts.filePath}`);
 
     opts = await synthAudio(stats, {
       vendor: 'aws',
@@ -81,7 +84,7 @@ test('speech synth tests', async(t) => {
       voice: 'Amy', 
       text: 'This is a test.  This is only a test'
     });
-    t.ok(opts.servedFromCache, `successfully synthesized cached aws audio to ${opts.filePath}`);
+    t.ok(opts.servedFromCache, `successfully retrieved aws audio from cache ${opts.filePath}`);
 
     const longText = `Henry is best known for his six marriages, including his efforts to have his first marriage 
     (to Catherine of Aragon) annulled. His disagreement with Pope Clement VII about such an 
@@ -94,7 +97,7 @@ test('speech synth tests', async(t) => {
     opts = await synthAudio(stats, {
       vendor: 'microsoft',
       credentials: {
-        apiKey: process.env.MICROSOFT_API_KEY,
+        api_key: process.env.MICROSOFT_API_KEY,
         region: process.env.MICROSOFT_REGION
       },
       language: 'en-US-ChristopherNeural',
@@ -107,7 +110,7 @@ test('speech synth tests', async(t) => {
     opts = await synthAudio(stats, {
       vendor: 'microsoft',
       credentials: {
-        apiKey: process.env.MICROSOFT_API_KEY,
+        api_key: process.env.MICROSOFT_API_KEY,
         region: process.env.MICROSOFT_REGION
       },
       language: 'en-US-ChristopherNeural',
@@ -125,20 +128,30 @@ test('speech synth tests', async(t) => {
     </voice>
     </speak>`;
 
-opts = await synthAudio(stats, {
-  vendor: 'microsoft',
-  credentials: {
-    apiKey: process.env.MICROSOFT_API_KEY,
-    region: process.env.MICROSOFT_REGION
-  },
-  language: 'en-US-ChristopherNeural',
-  voice: 'en-US-ChristopherNeural', 
-  text: ssml
-});
+    const shortText = "Hi there.  Would you like to order drinks first, or go straight to the main course?";
+    opts = await synthAudio(stats, {
+      vendor: 'wellsaid',
+      credentials: {
+        api_key: process.env.WELLSAID_API_KEY,
+      },
+      language: 'en-US',
+      voice: '3',
+      text: shortText
+    });
+    t.ok(!opts.servedFromCache, `successfully synthesized wellsaid audio to ${opts.filePath}`);
 
-t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
+    opts = await synthAudio(stats, {
+      vendor: 'wellsaid',
+      credentials: {
+        api_key: process.env.WELLSAID_API_KEY,
+      },
+      language: 'en-US',
+      voice: '3',
+      text: shortText
+    });
+    t.ok(opts.servedFromCache, `successfully retrieved cached wellsaid audio from ${opts.filePath}`);
 
-await client.flushallAsync();
+    await client.flushallAsync();
 
     t.end();
 
