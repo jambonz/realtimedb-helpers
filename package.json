@@ -1,6 +1,6 @@
 {
   "name": "@jambonz/realtimedb-helpers",
-  "version": "0.4.19",
+  "version": "0.4.20",
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
     "aws-sdk": "^2.1060.0",
     "bent": "^7.3.12",
     "debug": "^4.3.3",
-    "microsoft-cognitiveservices-speech-sdk": "^1.19.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.20.0",
     "redis": "^3.1.2"
   },
   "devDependencies": {

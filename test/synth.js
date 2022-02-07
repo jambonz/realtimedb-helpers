@@ -118,16 +118,7 @@ test('speech synth tests', async(t) => {
       text: longText
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft audio from cache ${opts.filePath}`);
-
-    const ssml = `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" xmlns:emo="http://www.w3.org/2009/10/emotionml" version="1.0" xml:lang="en-US">
-    <voice name="en-US-JennyNeural">
-    <prosody volume="loud">Hi there,</prosody> and welcome to jambones! 
-    jambones is the <sub alias="seapass">CPaaS</sub> designed with the needs of communication service providers in mind.
-    This is an example of simple text-to-speech, but there is so much more you can do.
-    Try us out!
-    </voice>
-    </speak>`;
-
+/*
     const shortText = "Hi there.  Would you like to order drinks first, or go straight to the main course?";
     opts = await synthAudio(stats, {
       vendor: 'wellsaid',
@@ -150,7 +141,7 @@ test('speech synth tests', async(t) => {
       text: shortText
     });
     t.ok(opts.servedFromCache, `successfully retrieved cached wellsaid audio from ${opts.filePath}`);
-
+*/
     await client.flushallAsync();
 
     t.end();
