@@ -3,12 +3,18 @@ const promisify = require('@jambonz/promisify-redis');
 const redis = promisify(require('redis'));
 
 module.exports = function(opts, logger) {
+  const {host = '127.0.0.1', port = 6379, tls = false} = opts;
   logger = logger || noopLogger;
-  const client = redis.createClient(opts);
+
+  const url = process.env.JAMBONES_REDIS_USERNAME && process.env.JAMBONES_REDIS_PASSWORD ?
+    `${process.env.JAMBONES_REDIS_USERNAME}:${process.env.JAMBONES_REDIS_PASSWORD}@${host}:${port}` :
+    `{host}:${port}`;
+  const client = redis.createClient( tls ? `rediss://${url}` : `redis://${url}`);
   ['ready', 'connect', 'reconnecting', 'error', 'end', 'warning']
     .forEach((event) => {
       client.on(event, (...args) => {
-        logger.debug({args}, `redis event ${event}`);
+        if ('error' === event) logger.error({...args}, '@jambonz/realtimedb-helpers - redis error');
+        else logger.debug({args}, `redis event ${event}`);
       });
     });
 

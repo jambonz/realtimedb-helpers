@@ -4,7 +4,7 @@
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test node test/ ",
+    "test": "NODE_ENV=test JAMBONES_REDIS_USERNAME=daveh JAMBONES_REDIS_PASSWORD=foobarbazzle node test/ ",
     "coverage": "nyc --reporter html --report-dir ./coverage npm run test",
     "jslint": "eslint index.js lib"
   },
