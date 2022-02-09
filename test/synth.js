@@ -44,7 +44,7 @@ test('speech synth tests', async(t) => {
       text: 'This is a test.  This is only a test',
       salt: 'foo.bar'
     });
-    t.ok(!opts.servedFromCache, `successfully synthesized google audio to ${opts.filepath}`);
+    t.ok(!opts.servedFromCache, `successfully synthesized google audio to ${opts.filePath}`);
   
     opts = await synthAudio(stats,{
       vendor: 'google',
@@ -68,7 +68,7 @@ test('speech synth tests', async(t) => {
         region: process.env.AWS_REGION
       },
       language: 'en-US',
-      voice: 'Amy', 
+      voice: 'Joey', 
       text: 'This is a test.  This is only a test'
     });
     t.ok(!opts.servedFromCache, `successfully synthesized aws audio to ${opts.filePath}`);
@@ -81,7 +81,7 @@ test('speech synth tests', async(t) => {
         region: process.env.AWS_REGION
       },
       language: 'en-US',
-      voice: 'Amy', 
+      voice: 'Joey', 
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved aws audio from cache ${opts.filePath}`);
