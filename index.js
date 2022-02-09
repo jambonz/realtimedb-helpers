@@ -8,7 +8,7 @@ module.exports = function(opts, logger) {
 
   const url = process.env.JAMBONES_REDIS_USERNAME && process.env.JAMBONES_REDIS_PASSWORD ?
     `${process.env.JAMBONES_REDIS_USERNAME}:${process.env.JAMBONES_REDIS_PASSWORD}@${host}:${port}` :
-    `{host}:${port}`;
+    `${host}:${port}`;
   const client = redis.createClient(tls ? `rediss://${url}` : `redis://${url}`);
   ['ready', 'connect', 'reconnecting', 'error', 'end', 'warning']
     .forEach((event) => {
