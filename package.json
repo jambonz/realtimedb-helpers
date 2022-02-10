@@ -1,6 +1,6 @@
 {
   "name": "@jambonz/realtimedb-helpers",
-  "version": "0.4.24",
+  "version": "0.4.25",
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
@@ -19,9 +19,9 @@
   "homepage": "https://github.com/jambonz/realtimedb-helpers#readme",
   "license": "MIT",
   "dependencies": {
-    "@aws-sdk/client-polly": "^3.50.0",
     "@google-cloud/text-to-speech": "^3.4.0",
     "@jambonz/promisify-redis": "^0.0.6",
+    "aws-sdk": "^2.1072.0",
     "bent": "^7.3.12",
     "debug": "^4.3.3",
     "microsoft-cognitiveservices-speech-sdk": "^1.20.0",
