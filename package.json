@@ -24,7 +24,7 @@
     "aws-sdk": "^2.1072.0",
     "bent": "^7.3.12",
     "debug": "^4.3.3",
-    "microsoft-cognitiveservices-speech-sdk": "^1.20.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.22.0",
     "redis": "^3.1.2"
   },
   "devDependencies": {
