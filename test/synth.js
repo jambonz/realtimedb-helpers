@@ -11,7 +11,7 @@ process.on('unhandledRejection', (reason, p) => {
 let histogramList = [];
 const stats = {
   increment: () => {},
-  histogram: (metricName, value, array) => {histogramList.push(...histogramList, {metricName, value, array})}
+  histogram: (metricName, value, array) => {histogramList.push({metricName, value, array})}
 };
 
 test('speech synth tests', async(t) => {
