@@ -8,9 +8,10 @@ process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
 
+let histogramList = [];
 const stats = {
   increment: () => {},
-  histogram: () => {}
+  histogram: (metricName, value, array) => {histogramList.push(...histogramList, {metricName, value, array})}
 };
 
 test('speech synth tests', async(t) => {
@@ -31,6 +32,7 @@ test('speech synth tests', async(t) => {
   }
   try {
     const creds = JSON.parse(fs.readFileSync(process.env.GCP_FILE));
+    histogramList = [];
     let opts = await synthAudio(stats, {
       vendor: 'google',
       credentials: {
@@ -45,7 +47,9 @@ test('speech synth tests', async(t) => {
       salt: 'foo.bar'
     });
     t.ok(!opts.servedFromCache, `successfully synthesized google audio to ${opts.filePath}`);
+    t.ok(histogramList[0].array.includes('google'));
   
+    histogramList = [];
     opts = await synthAudio(stats,{
       vendor: 'google',
       credentials: {
@@ -59,7 +63,9 @@ test('speech synth tests', async(t) => {
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved cached google audio from ${opts.filePath}`);
+    t.ok(histogramList[0].array.includes('google'));
 
+    histogramList = [];
     opts = await synthAudio(stats, {
       vendor: 'aws',
       credentials: {
@@ -72,7 +78,9 @@ test('speech synth tests', async(t) => {
       text: 'This is a test.  This is only a test'
     });
     t.ok(!opts.servedFromCache, `successfully synthesized aws audio to ${opts.filePath}`);
+    t.ok(histogramList[0].array.includes('aws'));
 
+    histogramList = [];
     opts = await synthAudio(stats, {
       vendor: 'aws',
       credentials: {
@@ -85,6 +93,7 @@ test('speech synth tests', async(t) => {
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved aws audio from cache ${opts.filePath}`);
+    t.ok(histogramList[0].array.includes('aws'));
 
     const longText = `Henry is best known for his six marriages, including his efforts to have his first marriage 
     (to Catherine of Aragon) annulled. His disagreement with Pope Clement VII about such an 
@@ -94,6 +103,7 @@ test('speech synth tests', async(t) => {
     Henry is also known as "the father of the Royal Navy," as he invested heavily in the navy, 
     increasing its size from a few to more than 50 ships, and established the Navy Board.`;
 
+    histogramList = [];
     opts = await synthAudio(stats, {
       vendor: 'microsoft',
       credentials: {
@@ -105,8 +115,9 @@ test('speech synth tests', async(t) => {
       text: longText
     });
     t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
+    t.ok(histogramList[0].array.includes('microsoft'));
 
-
+    histogramList = [];
     opts = await synthAudio(stats, {
       vendor: 'microsoft',
       credentials: {
@@ -118,6 +129,7 @@ test('speech synth tests', async(t) => {
       text: longText
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft audio from cache ${opts.filePath}`);
+    t.ok(histogramList[0].array.includes('microsoft'));
 /*
     const shortText = "Hi there.  Would you like to order drinks first, or go straight to the main course?";
     opts = await synthAudio(stats, {
