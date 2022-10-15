@@ -7,4 +7,5 @@ require('./hash');
 require('./key');
 require('./queues');
 require('./auth');
+require('./nuance');
 require('./docker_stop');

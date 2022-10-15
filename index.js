@@ -45,5 +45,6 @@ module.exports = function(opts, logger) {
     getListPosition: require('./lib/list/position').bind(null, client, logger),
     popFront: require('./lib/list/pop-front').bind(null, client, logger),
     removeFromList: require('./lib/list/remove').bind(null, client, logger),
+    getNuanceAccessToken: require('./lib/get-nuance-access-token').bind(null, client, logger),
   };
 };
