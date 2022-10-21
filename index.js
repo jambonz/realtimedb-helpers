@@ -36,6 +36,7 @@ module.exports = function(opts, logger) {
     createHash: require('./lib/hash/create-hash').bind(null, client, logger),
     retrieveHash: require('./lib/hash/retrieve-hash').bind(null, client, logger),
     addKey: require('./lib/key/add-key').bind(null, client, logger),
+    addKeyNx: require('./lib/key/add-key-nx').bind(null, client, logger),
     retrieveKey: require('./lib/key/retrieve-key').bind(null, client, logger),
     deleteKey: require('./lib/key/delete-key').bind(null, client, logger),
     incrKey: require('./lib/key/incr').bind(null, client, logger),

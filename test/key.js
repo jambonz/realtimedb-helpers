@@ -2,13 +2,21 @@ const test = require('tape').test ;
 const config = require('config');
 const opts = config.get('redis');
 
+async function sleepFor(ms) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+}
+
 process.on('unhandledRejection', (reason, p) => {
   console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
 });
 
 test('key tests', async(t) => {
   const fn = require('..');
-  const {addKey, deleteKey, retrieveKey, incrKey, decrKey, client} = fn(opts);
+  const {addKey, addKeyNx, deleteKey, retrieveKey, incrKey, decrKey, client} = fn(opts);
 
   try {
     let result = await addKey('akey', 'value');
@@ -18,9 +26,19 @@ test('key tests', async(t) => {
     result = await addKey('bkey', 'another value', 3);
     t.ok(result === 'OK', 'sucessfully set a key with expires');
 
-
     await deleteKey('akey');
     await deleteKey('bkey');
+    await deleteKey('mykey');
+
+    result = await addKeyNx('mykey', 'myvalue', 2);
+    t.ok(result === 'OK', 'sucessfully setnx a key when it does not exist');
+    result = await addKeyNx('mykey', 'myvalue');
+    t.ok(result === null, 'setnx returns null if key exists');
+    await sleepFor(3000)
+    result = await addKeyNx('mykey', 'myvalue');
+    t.ok(result === 'OK', 'setnx inserts key again if key has expired');
+    await deleteKey('mykey');
+
 
     result = await incrKey('mykey');
     t.ok(result === 1, 'incrKey initializes to zero if not there');
