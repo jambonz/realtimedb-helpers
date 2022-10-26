@@ -2,7 +2,7 @@ const {noopLogger} = require('./lib/utils');
 const promisify = require('@jambonz/promisify-redis');
 const redis = promisify(require('redis'));
 
-module.exports = function(opts, logger) {
+module.exports = (opts, logger) => {
   const {host = '127.0.0.1', port = 6379, tls = false} = opts;
   logger = logger || noopLogger;
 
@@ -47,5 +47,6 @@ module.exports = function(opts, logger) {
     popFront: require('./lib/list/pop-front').bind(null, client, logger),
     removeFromList: require('./lib/list/remove').bind(null, client, logger),
     getNuanceAccessToken: require('./lib/get-nuance-access-token').bind(null, client, logger),
+    getTtsVoices: require('./lib/get-tts-voices').bind(null, client, logger),
   };
 };

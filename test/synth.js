@@ -13,21 +13,13 @@ const stats = {
   histogram: () => {}
 };
 
-test('speech synth tests', async(t) => {
+test('Google speech synth tests', async(t) => {
   const fn = require('..');
   const {synthAudio, client} = fn(opts, logger);
 
-  if (!process.env.GCP_FILE ||
-    !process.env.MICROSOFT_API_KEY ||
-    !process.env.MICROSOFT_REGION ||
-    !process.env.AWS_ACCESS_KEY_ID ||
-    !process.env.AWS_SECRET_ACCESS_KEY ||
-    !process.env.AWS_REGION ||
-    !process.env.WELLSAID_API_KEY) {
-      t.pass('skipping speech synth tests since no credentials provided');
-      t.end();
-      client.quit();
-      return;
+  if (!process.env.GCP_FILE ) {
+      t.pass('skipping google speech synth tests since GCP_FILE not provided');
+      return t.end();
   }
   try {
     const creds = JSON.parse(fs.readFileSync(process.env.GCP_FILE));
@@ -59,8 +51,24 @@ test('speech synth tests', async(t) => {
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved cached google audio from ${opts.filePath}`);
+  }
+  catch (err) {
+    console.error(err);
+    t.end(err);
+  }
+  client.quit();
+});
 
-    opts = await synthAudio(stats, {
+test('AWS speech synth tests', async(t) => {
+  const fn = require('..');
+  const {synthAudio, client} = fn(opts, logger);
+
+  if (process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) { 
+    t.pass('skipping AWS speech synth tests since AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, or AWS_REGION not provided');
+    return t.end();
+  }
+  try {
+    let opts = await synthAudio(stats, {
       vendor: 'aws',
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -85,7 +93,23 @@ test('speech synth tests', async(t) => {
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved aws audio from cache ${opts.filePath}`);
+  }
+  catch (err) {
+    console.error(err);
+    t.end(err);
+  }
+  client.quit();
+});
 
+test('Azure speech synth tests', async(t) => {
+  const fn = require('..');
+  const {synthAudio, client} = fn(opts, logger);
+
+  if (!process.env.MICROSOFT_API_KEY || !process.env.MICROSOFT_REGION) {
+    t.pass('skipping Microsoft speech synth tests since MICROSOFT_API_KEY or MICROSOFT_REGION not provided');
+    return t.end();
+  }
+  try {
     const longText = `Henry is best known for his six marriages, including his efforts to have his first marriage 
     (to Catherine of Aragon) annulled. His disagreement with Pope Clement VII about such an 
     annulment led Henry to initiate the English Reformation, 
@@ -94,7 +118,7 @@ test('speech synth tests', async(t) => {
     Henry is also known as "the father of the Royal Navy," as he invested heavily in the navy, 
     increasing its size from a few to more than 50 ships, and established the Navy Board.`;
 
-    opts = await synthAudio(stats, {
+    let opts = await synthAudio(stats, {
       vendor: 'microsoft',
       credentials: {
         api_key: process.env.MICROSOFT_API_KEY,
@@ -118,34 +142,46 @@ test('speech synth tests', async(t) => {
       text: longText
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft audio from cache ${opts.filePath}`);
-/*
-    const shortText = "Hi there.  Would you like to order drinks first, or go straight to the main course?";
-    opts = await synthAudio(stats, {
-      vendor: 'wellsaid',
+  }
+  catch (err) {
+    console.error(err); 
+    t.end(err);
+  }
+  client.quit();
+});
+
+test('Nuance speech synth tests', async(t) => {
+  const fn = require('..');
+  const {synthAudio, client} = fn(opts, logger);
+
+  if (!process.env.NUANCE_CLIENT_ID || !process.env.NUANCE_SECRET) { 
+    t.pass('skipping Nuance speech synth tests since NUANCE_CLIENT_ID or NUANCE_SECRET not provided');
+    return t.end();
+  }
+  try {
+    let opts = await synthAudio(stats, {
+      vendor: 'nuance',
       credentials: {
-        api_key: process.env.WELLSAID_API_KEY,
+        client_id: process.env.NUANCE_CLIENT_ID,
+        secret: process.env.NUANCE_SECRET
       },
       language: 'en-US',
-      voice: '3',
-      text: shortText
+      voice: 'Evan', 
+      text: 'This is a test.  This is only a test'
     });
-    t.ok(!opts.servedFromCache, `successfully synthesized wellsaid audio to ${opts.filePath}`);
+    t.ok(!opts.servedFromCache, `successfully synthesized nuance audio to ${opts.filePath}`);
 
     opts = await synthAudio(stats, {
-      vendor: 'wellsaid',
+      vendor: 'nuance',
       credentials: {
-        api_key: process.env.WELLSAID_API_KEY,
+        client_id: process.env.NUANCE_CLIENT_ID,
+        secret: process.env.NUANCE_SECRET
       },
       language: 'en-US',
-      voice: '3',
-      text: shortText
+      voice: 'Evan', 
+      text: 'This is a test.  This is only a test'
     });
-    t.ok(opts.servedFromCache, `successfully retrieved cached wellsaid audio from ${opts.filePath}`);
-*/
-    await client.flushallAsync();
-
-    t.end();
-
+    t.ok(opts.servedFromCache, `successfully retrieved nuance audio from cache ${opts.filePath}`);
   }
   catch (err) {
     console.error(err);
@@ -153,4 +189,3 @@ test('speech synth tests', async(t) => {
   }
   client.quit();
 });
-

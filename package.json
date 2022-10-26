@@ -6,7 +6,8 @@
   "scripts": {
     "test": "NODE_ENV=test JAMBONES_REDIS_USERNAME=daveh JAMBONES_REDIS_PASSWORD=foobarbazzle node test/ ",
     "coverage": "nyc --reporter html --report-dir ./coverage npm run test",
-    "jslint": "eslint index.js lib"
+    "jslint": "eslint index.js lib",
+    "build": "./build_stubs.sh"
   },
   "repository": {
     "type": "git",
@@ -20,11 +21,14 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/text-to-speech": "^4.0.3",
+    "@grpc/grpc-js": "^1.7.3",
+    "@grpc/proto-loader": "^0.7.3",
     "@jambonz/promisify-redis": "^0.0.6",
     "aws-sdk": "^2.1238.0",
     "bent": "^7.3.12",
     "debug": "^4.3.3",
     "form-urlencoded": "^6.1.0",
+    "google-protobuf": "^3.21.2",
     "microsoft-cognitiveservices-speech-sdk": "^1.24.0",
     "redis": "^3.1.2",
     "undici": "^5.11.0"
