@@ -1,5 +1,6 @@
 require('./docker_start');
 require('./calls');
+require('./nuance');
 require('./synth');
 require('./list');
 require('./set');
@@ -7,5 +8,4 @@ require('./hash');
 require('./key');
 require('./queues');
 require('./auth');
-require('./nuance');
 require('./docker_stop');
