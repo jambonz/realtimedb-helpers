@@ -1,6 +1,6 @@
 {
   "name": "@jambonz/realtimedb-helpers",
-  "version": "0.4.35",
+  "version": "0.4.36",
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,6 @@
   "dependencies": {
     "@google-cloud/text-to-speech": "^4.0.3",
     "@grpc/grpc-js": "^1.7.3",
-    "@grpc/proto-loader": "^0.7.3",
     "@jambonz/promisify-redis": "^0.0.6",
     "aws-sdk": "^2.1238.0",
     "bent": "^7.3.12",
