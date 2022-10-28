@@ -31,6 +31,7 @@ test('Nuance tests', async(t) => {
       }
     };
     let voices = await getTtsVoices(opts);
+    //console.log(`received ${voices.length} voices from Nuance`);
     //console.log(JSON.stringify(voices));
     t.ok(voices.length > 0 && voices[0].language, 
       `GetVoices: successfully retrieved ${voices.length} voices from Nuance`);
