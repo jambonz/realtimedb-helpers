@@ -159,16 +159,17 @@ test('Azure custom voice speech synth tests', async(t) => {
     return t.end();
   }
   try {
-    const text = 'Hi, this is my custom voice. How does it sound?';
+    const text = 'Hi, this is my custom voice. How does it sound to you?  Do I have a future as a virtual bot?';
     let opts = await synthAudio(stats, {
       vendor: 'microsoft',
       credentials: {
         api_key: process.env.MICROSOFT_CUSTOM_API_KEY,
-        region: process.env.MICROSOFT_CUSTOM_REGION
+        region: process.env.MICROSOFT_CUSTOM_REGION,
+        use_custom_tts: true,
+        custom_tts_endpoint: process.env.MICROSOFT_DEPLOYMENT_ID
       },
       language: 'en-US',
       voice: process.env.MICROSOFT_CUSTOM_VOICE,
-      deploymentId: process.env.MICROSOFT_DEPLOYMENT_ID,
       text
     });
     t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
@@ -177,11 +178,12 @@ test('Azure custom voice speech synth tests', async(t) => {
       vendor: 'microsoft',
       credentials: {
         api_key: process.env.MICROSOFT_CUSTOM_API_KEY,
-        region: process.env.MICROSOFT_CUSTOM_REGION
+        region: process.env.MICROSOFT_CUSTOM_REGION,
+        use_custom_tts: true,
+        custom_tts_endpoint: process.env.MICROSOFT_DEPLOYMENT_ID
       },
       language: 'en-US',
       voice: process.env.MICROSOFT_CUSTOM_VOICE,
-      deploymentId: process.env.MICROSOFT_DEPLOYMENT_ID,
       text
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft custom voice audio from cache ${opts.filePath}`);
