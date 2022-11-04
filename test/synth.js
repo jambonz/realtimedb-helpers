@@ -124,7 +124,7 @@ test('Azure speech synth tests', async(t) => {
         api_key: process.env.MICROSOFT_API_KEY,
         region: process.env.MICROSOFT_REGION
       },
-      language: 'en-US-ChristopherNeural',
+      language: 'en-US',
       voice: 'en-US-ChristopherNeural', 
       text: longText
     });
@@ -137,11 +137,54 @@ test('Azure speech synth tests', async(t) => {
         api_key: process.env.MICROSOFT_API_KEY,
         region: process.env.MICROSOFT_REGION
       },
-      language: 'en-US-ChristopherNeural',
+      language: 'en-US',
       voice: 'en-US-ChristopherNeural', 
       text: longText
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft audio from cache ${opts.filePath}`);
+  }
+  catch (err) {
+    console.error(err); 
+    t.end(err);
+  }
+  client.quit();
+});
+
+test('Azure custom voice speech synth tests', async(t) => {
+  const fn = require('..');
+  const {synthAudio, client} = fn(opts, logger);
+
+  if (!process.env.MICROSOFT_CUSTOM_API_KEY || !process.env.MICROSOFT_DEPLOYMENT_ID || !process.env.MICROSOFT_CUSTOM_REGION) {
+    t.pass('skipping Microsoft speech synth custom voice tests since MICROSOFT_CUSTOM_API_KEY or MICROSOFT_DEPLOYMENT_ID or MICROSOFT_CUSTOM_REGION not provided');
+    return t.end();
+  }
+  try {
+    const text = 'Hi, this is my custom voice. How does it sound?';
+    let opts = await synthAudio(stats, {
+      vendor: 'microsoft',
+      credentials: {
+        api_key: process.env.MICROSOFT_CUSTOM_API_KEY,
+        region: process.env.MICROSOFT_CUSTOM_REGION
+      },
+      language: 'en-US',
+      voice: process.env.MICROSOFT_CUSTOM_VOICE,
+      deploymentId: process.env.MICROSOFT_DEPLOYMENT_ID,
+      text
+    });
+    t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
+
+    opts = await synthAudio(stats, {
+      vendor: 'microsoft',
+      credentials: {
+        api_key: process.env.MICROSOFT_CUSTOM_API_KEY,
+        region: process.env.MICROSOFT_CUSTOM_REGION
+      },
+      language: 'en-US',
+      voice: process.env.MICROSOFT_CUSTOM_VOICE,
+      deploymentId: process.env.MICROSOFT_DEPLOYMENT_ID,
+      text
+    });
+    t.ok(opts.servedFromCache, `successfully retrieved microsoft custom voice audio from cache ${opts.filePath}`);
   }
   catch (err) {
     console.error(err); 
