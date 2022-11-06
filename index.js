@@ -13,7 +13,10 @@ module.exports = (opts, logger) => {
   ['ready', 'connect', 'reconnecting', 'error', 'end', 'warning']
     .forEach((event) => {
       client.on(event, (...args) => {
-        if ('error' === event) logger.error({...args}, '@jambonz/realtimedb-helpers - redis error');
+        if ('error' === event) {
+          if (process.env.NODE_ENV === 'test' && args[0]?.code === 'ECONNREFUSED') return;
+          logger.error({...args}, '@jambonz/realtimedb-helpers - redis error');
+        }
         else logger.debug({args}, `redis event ${event}`);
       });
     });
