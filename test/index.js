@@ -1,6 +1,7 @@
 require('./docker_start');
 require('./calls');
 require('./nuance');
+require('./ibm');
 require('./synth');
 require('./list');
 require('./set');

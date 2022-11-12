@@ -234,3 +234,43 @@ test('Nuance speech synth tests', async(t) => {
   }
   client.quit();
 });
+
+test('IBM watson speech synth tests', async(t) => {
+  const fn = require('..');
+  const {synthAudio, client} = fn(opts, logger);
+
+  if (!process.env.IBM_TTS_API_KEY || !process.env.IBM_TTS_REGION) { 
+    t.pass('skipping IBM Watson speech synth tests since IBM_TTS_API_KEY or IBM_TTS_API_KEY not provided');
+    return t.end();
+  }
+  try {
+    let opts = await synthAudio(stats, {
+      vendor: 'ibm',
+      credentials: {
+        api_key: process.env.IBM_TTS_API_KEY,
+        region: process.env.IBM_TTS_REGION
+      },
+      language: 'en-US',
+      voice: 'en-US_AllisonV2Voice', 
+      text: 'This is a test.  This is only a test'
+    });
+    t.ok(!opts.servedFromCache, `successfully synthesized ibm audio to ${opts.filePath}`);
+
+    opts = await synthAudio(stats, {
+      vendor: 'ibm',
+      credentials: {
+        api_key: process.env.IBM_TTS_API_KEY,
+        region: process.env.IBM_TTS_REGION
+      },
+      language: 'en-US',
+      voice: 'en-US_AllisonV2Voice', 
+      text: 'This is a test.  This is only a test'
+    });
+    t.ok(opts.servedFromCache, `successfully retrieved ibm audio from cache ${opts.filePath}`);
+  }
+  catch (err) {
+    console.error(err);
+    t.end(err);
+  }
+  client.quit();
+});

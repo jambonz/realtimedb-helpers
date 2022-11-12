@@ -50,6 +50,7 @@ module.exports = (opts, logger) => {
     popFront: require('./lib/list/pop-front').bind(null, client, logger),
     removeFromList: require('./lib/list/remove').bind(null, client, logger),
     getNuanceAccessToken: require('./lib/get-nuance-access-token').bind(null, client, logger),
+    getIbmAccessToken: require('./lib/get-ibm-access-token').bind(null, client, logger),
     getTtsVoices: require('./lib/get-tts-voices').bind(null, client, logger),
   };
 };
