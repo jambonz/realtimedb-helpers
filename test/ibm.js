@@ -55,8 +55,8 @@ test('IBM - retrieve tts voices test', async(t) => {
     const opts = {
       vendor: 'ibm',
       credentials: {
-        api_key: process.env.IBM_TTS_API_KEY,
-        region: process.env.IBM_TTS_REGION
+        tts_api_key: process.env.IBM_TTS_API_KEY,
+        tts_region: process.env.IBM_TTS_REGION
       }
     };
     const obj = await getTtsVoices(opts);

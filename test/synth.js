@@ -247,8 +247,8 @@ test('IBM watson speech synth tests', async(t) => {
     let opts = await synthAudio(stats, {
       vendor: 'ibm',
       credentials: {
-        api_key: process.env.IBM_TTS_API_KEY,
-        region: process.env.IBM_TTS_REGION
+        tts_api_key: process.env.IBM_TTS_API_KEY,
+        tts_region: process.env.IBM_TTS_REGION
       },
       language: 'en-US',
       voice: 'en-US_AllisonV2Voice', 
@@ -259,8 +259,8 @@ test('IBM watson speech synth tests', async(t) => {
     opts = await synthAudio(stats, {
       vendor: 'ibm',
       credentials: {
-        api_key: process.env.IBM_TTS_API_KEY,
-        region: process.env.IBM_TTS_REGION
+        tts_api_key: process.env.IBM_TTS_API_KEY,
+        tts_region: process.env.IBM_TTS_REGION
       },
       language: 'en-US',
       voice: 'en-US_AllisonV2Voice', 
