@@ -17,12 +17,13 @@ test('Google speech synth tests', async(t) => {
   const fn = require('..');
   const {synthAudio, client} = fn(opts, logger);
 
-  if (!process.env.GCP_FILE ) {
-      t.pass('skipping google speech synth tests since GCP_FILE not provided');
+  if (!process.env.GCP_FILE && !process.env.GCP_JSON_KEY) {
+      t.pass('skipping google speech synth tests since neither GCP_FILE nor GCP_JSON_KEY provided');
       return t.end();
   }
   try {
-    const creds = JSON.parse(fs.readFileSync(process.env.GCP_FILE));
+    const str = process.env.GCP_JSON_KEY || fs.readFileSync(process.env.GCP_FILE);
+    const creds = JSON.parse(str);
     let opts = await synthAudio(stats, {
       vendor: 'google',
       credentials: {
