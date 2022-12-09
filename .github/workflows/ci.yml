@@ -8,10 +8,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 17
+          node-version: lts/*
       - run: npm install
       - run: npm run jslint
       - run: npm test
@@ -25,5 +25,3 @@ jobs:
           IBM_TTS_REGION: ${{ secrets.IBM_TTS_REGION }}
           MICROSOFT_API_KEY: ${{ secrets.MICROSOFT_API_KEY }}
           MICROSOFT_REGION: ${{ secrets.MICROSOFT_REGION }}
-
-
