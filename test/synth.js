@@ -32,12 +32,12 @@ test('Google speech synth tests', async(t) => {
         }
       },
       language: 'en-GB',
-      gender: 'MALE', 
+      gender: 'MALE',
       text: 'This is a test.  This is only a test',
       salt: 'foo.bar'
     });
     t.ok(!opts.servedFromCache, `successfully synthesized google audio to ${opts.filePath}`);
-  
+
     opts = await synthAudio(stats,{
       vendor: 'google',
       credentials: {
@@ -47,10 +47,25 @@ test('Google speech synth tests', async(t) => {
         }
       },
       language: 'en-GB',
-      gender: 'MALE', 
+      gender: 'MALE',
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved cached google audio from ${opts.filePath}`);
+
+    opts = await synthAudio(stats,{
+      vendor: 'google',
+      credentials: {
+        credentials: {
+          client_email: creds.client_email,
+          private_key: creds.private_key
+        }
+      },
+      disableTtsCache: true,
+      language: 'en-GB',
+      gender: 'MALE',
+      text: 'This is a test.  This is only a test'
+    });
+    t.ok(!opts.servedFromCache, `successfully synthesized google audio regardless of current cache to ${opts.filePath}`);
   }
   catch (err) {
     console.error(err);
@@ -63,7 +78,7 @@ test('AWS speech synth tests', async(t) => {
   const fn = require('..');
   const {synthAudio, client} = fn(opts, logger);
 
-  if (process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) { 
+  if (process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY || !process.env.AWS_REGION) {
     t.pass('skipping AWS speech synth tests since AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, or AWS_REGION not provided');
     return t.end();
   }
@@ -76,7 +91,7 @@ test('AWS speech synth tests', async(t) => {
         region: process.env.AWS_REGION
       },
       language: 'en-US',
-      voice: 'Joey', 
+      voice: 'Joey',
       text: 'This is a test.  This is only a test'
     });
     t.ok(!opts.servedFromCache, `successfully synthesized aws audio to ${opts.filePath}`);
@@ -89,7 +104,7 @@ test('AWS speech synth tests', async(t) => {
         region: process.env.AWS_REGION
       },
       language: 'en-US',
-      voice: 'Joey', 
+      voice: 'Joey',
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved aws audio from cache ${opts.filePath}`);
@@ -125,7 +140,7 @@ test('Azure speech synth tests', async(t) => {
         region: process.env.MICROSOFT_REGION
       },
       language: 'en-US',
-      voice: 'en-US-ChristopherNeural', 
+      voice: 'en-US-ChristopherNeural',
       text: longText
     });
     t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
@@ -138,13 +153,13 @@ test('Azure speech synth tests', async(t) => {
         region: process.env.MICROSOFT_REGION
       },
       language: 'en-US',
-      voice: 'en-US-ChristopherNeural', 
+      voice: 'en-US-ChristopherNeural',
       text: longText
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft audio from cache ${opts.filePath}`);
   }
   catch (err) {
-    console.error(err); 
+    console.error(err);
     t.end(err);
   }
   client.quit();
@@ -189,7 +204,7 @@ test('Azure custom voice speech synth tests', async(t) => {
     t.ok(opts.servedFromCache, `successfully retrieved microsoft custom voice audio from cache ${opts.filePath}`);
   }
   catch (err) {
-    console.error(err); 
+    console.error(err);
     t.end(err);
   }
   client.quit();
@@ -199,7 +214,7 @@ test('Nuance speech synth tests', async(t) => {
   const fn = require('..');
   const {synthAudio, client} = fn(opts, logger);
 
-  if (!process.env.NUANCE_CLIENT_ID || !process.env.NUANCE_SECRET) { 
+  if (!process.env.NUANCE_CLIENT_ID || !process.env.NUANCE_SECRET) {
     t.pass('skipping Nuance speech synth tests since NUANCE_CLIENT_ID or NUANCE_SECRET not provided');
     return t.end();
   }
@@ -211,7 +226,7 @@ test('Nuance speech synth tests', async(t) => {
         secret: process.env.NUANCE_SECRET
       },
       language: 'en-US',
-      voice: 'Evan', 
+      voice: 'Evan',
       text: 'This is a test.  This is only a test'
     });
     t.ok(!opts.servedFromCache, `successfully synthesized nuance audio to ${opts.filePath}`);
@@ -223,7 +238,7 @@ test('Nuance speech synth tests', async(t) => {
         secret: process.env.NUANCE_SECRET
       },
       language: 'en-US',
-      voice: 'Evan', 
+      voice: 'Evan',
       text: 'This is a test.  This is only a test'
     });
     t.ok(opts.servedFromCache, `successfully retrieved nuance audio from cache ${opts.filePath}`);
@@ -239,7 +254,7 @@ test('IBM watson speech synth tests', async(t) => {
   const fn = require('..');
   const {synthAudio, client} = fn(opts, logger);
 
-  if (!process.env.IBM_TTS_API_KEY || !process.env.IBM_TTS_REGION) { 
+  if (!process.env.IBM_TTS_API_KEY || !process.env.IBM_TTS_REGION) {
     t.pass('skipping IBM Watson speech synth tests since IBM_TTS_API_KEY or IBM_TTS_API_KEY not provided');
     return t.end();
   }
@@ -252,7 +267,7 @@ test('IBM watson speech synth tests', async(t) => {
         tts_region: process.env.IBM_TTS_REGION
       },
       language: 'en-US',
-      voice: 'en-US_AllisonV2Voice', 
+      voice: 'en-US_AllisonV2Voice',
       text
     });
     t.ok(!opts.servedFromCache, `successfully synthesized ibm audio to ${opts.filePath}`);
@@ -264,7 +279,7 @@ test('IBM watson speech synth tests', async(t) => {
         tts_region: process.env.IBM_TTS_REGION
       },
       language: 'en-US',
-      voice: 'en-US_AllisonV2Voice', 
+      voice: 'en-US_AllisonV2Voice',
       text
     });
     t.ok(opts.servedFromCache, `successfully retrieved ibm audio from cache ${opts.filePath}`);
