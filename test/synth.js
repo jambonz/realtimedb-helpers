@@ -2,6 +2,7 @@ const test = require('tape').test ;
 const config = require('config');
 const opts = config.get('redis');
 const fs = require('fs');
+const {makeSynthKey} = require('../lib/utils');
 const logger = require('pino')();
 
 process.on('unhandledRejection', (reason, p) => {
@@ -289,5 +290,50 @@ test('IBM watson speech synth tests', async(t) => {
     console.error(JSON.stringify(err));
     t.end(err);
   }
+  client.quit();
+});
+
+test('TTS Cache tests', async(t) => {
+  const fn = require('..');
+  const {purgeTtsCache, client} = fn(opts, logger);
+
+  try {
+    // save some random tts keys to cache
+    const minRecords = 8;
+    for (const i in Array(minRecords).fill(0)) {
+      await client.setAsync(makeSynthKey({vendor: i, language: i, voice: i, engine: i, text: i}), i);
+    }
+    const purged = await purgeTtsCache();
+    t.ok(purged >= minRecords, `successfully purged at least ${minRecords} tts records from cache`);
+
+    const cached = (await client.keysAsync('tts:*')).length;
+    t.equal(cached, 0, `successfully purged all tts records from cache`);
+
+  } catch (err) {
+    console.error(JSON.stringify(err));
+    t.end(err);
+  }
+
+  try {
+    // save some random tts keys to cache
+    for (const i in Array(10).fill(0)) {
+      await client.setAsync(makeSynthKey({vendor: i, language: i, voice: i, engine: i, text: i}), i);
+    }
+    // save a specific key to tts cache
+    const opts = {vendor: 'aws', language: 'en-US', voice: 'MALE', engine: 'Engine', text: 'Hello World!'};
+    await client.setAsync(makeSynthKey(opts), opts.text);
+
+    const purged = await purgeTtsCache({all: false, ...opts});
+    t.ok(purged === 1, `successfully purged one specific tts record from cache`);
+
+    // make sure other tts keys are still there
+    const cached = (await client.keysAsync('tts:*')).length;
+    t.ok(cached >= 1, `successfully kept all non-specified tts records in cache`);
+
+  } catch (err) {
+    console.error(JSON.stringify(err));
+    t.end(err);
+  }
+
   client.quit();
 });
