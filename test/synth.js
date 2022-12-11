@@ -1,4 +1,4 @@
-const test = require('tape').test ;
+const test = require('tape').test;
 const config = require('config');
 const opts = config.get('redis');
 const fs = require('fs');
@@ -10,8 +10,10 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 const stats = {
-  increment: () => {},
-  histogram: () => {}
+  increment: () => {
+  },
+  histogram: () => {
+  },
 };
 
 test('Google speech synth tests', async(t) => {
@@ -19,8 +21,8 @@ test('Google speech synth tests', async(t) => {
   const {synthAudio, client} = fn(opts, logger);
 
   if (!process.env.GCP_FILE && !process.env.GCP_JSON_KEY) {
-      t.pass('skipping google speech synth tests since neither GCP_FILE nor GCP_JSON_KEY provided');
-      return t.end();
+    t.pass('skipping google speech synth tests since neither GCP_FILE nor GCP_JSON_KEY provided');
+    return t.end();
   }
   try {
     const str = process.env.GCP_JSON_KEY || fs.readFileSync(process.env.GCP_FILE);
@@ -30,46 +32,45 @@ test('Google speech synth tests', async(t) => {
       credentials: {
         credentials: {
           client_email: creds.client_email,
-          private_key: creds.private_key
-        }
+          private_key: creds.private_key,
+        },
       },
       language: 'en-GB',
       gender: 'MALE',
       text: 'This is a test.  This is only a test',
-      salt: 'foo.bar'
+      salt: 'foo.bar',
     });
     t.ok(!opts.servedFromCache, `successfully synthesized google audio to ${opts.filePath}`);
 
-    opts = await synthAudio(stats,{
+    opts = await synthAudio(stats, {
       vendor: 'google',
       credentials: {
         credentials: {
           client_email: creds.client_email,
-          private_key: creds.private_key
-        }
+          private_key: creds.private_key,
+        },
       },
       language: 'en-GB',
       gender: 'MALE',
-      text: 'This is a test.  This is only a test'
+      text: 'This is a test.  This is only a test',
     });
     t.ok(opts.servedFromCache, `successfully retrieved cached google audio from ${opts.filePath}`);
 
-    opts = await synthAudio(stats,{
+    opts = await synthAudio(stats, {
       vendor: 'google',
       credentials: {
         credentials: {
           client_email: creds.client_email,
-          private_key: creds.private_key
-        }
+          private_key: creds.private_key,
+        },
       },
       disableTtsCache: true,
       language: 'en-GB',
       gender: 'MALE',
-      text: 'This is a test.  This is only a test'
+      text: 'This is a test.  This is only a test',
     });
     t.ok(!opts.servedFromCache, `successfully synthesized google audio regardless of current cache to ${opts.filePath}`);
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
     t.end(err);
   }
@@ -90,11 +91,11 @@ test('AWS speech synth tests', async(t) => {
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
       },
       language: 'en-US',
       voice: 'Joey',
-      text: 'This is a test.  This is only a test'
+      text: 'This is a test.  This is only a test',
     });
     t.ok(!opts.servedFromCache, `successfully synthesized aws audio to ${opts.filePath}`);
 
@@ -103,15 +104,14 @@ test('AWS speech synth tests', async(t) => {
       credentials: {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-        region: process.env.AWS_REGION
+        region: process.env.AWS_REGION,
       },
       language: 'en-US',
       voice: 'Joey',
-      text: 'This is a test.  This is only a test'
+      text: 'This is a test.  This is only a test',
     });
     t.ok(opts.servedFromCache, `successfully retrieved aws audio from cache ${opts.filePath}`);
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
     t.end(err);
   }
@@ -139,11 +139,11 @@ test('Azure speech synth tests', async(t) => {
       vendor: 'microsoft',
       credentials: {
         api_key: process.env.MICROSOFT_API_KEY,
-        region: process.env.MICROSOFT_REGION
+        region: process.env.MICROSOFT_REGION,
       },
       language: 'en-US',
       voice: 'en-US-ChristopherNeural',
-      text: longText
+      text: longText,
     });
     t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
 
@@ -152,15 +152,14 @@ test('Azure speech synth tests', async(t) => {
       vendor: 'microsoft',
       credentials: {
         api_key: process.env.MICROSOFT_API_KEY,
-        region: process.env.MICROSOFT_REGION
+        region: process.env.MICROSOFT_REGION,
       },
       language: 'en-US',
       voice: 'en-US-ChristopherNeural',
-      text: longText
+      text: longText,
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft audio from cache ${opts.filePath}`);
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
     t.end(err);
   }
@@ -183,11 +182,11 @@ test('Azure custom voice speech synth tests', async(t) => {
         api_key: process.env.MICROSOFT_CUSTOM_API_KEY,
         region: process.env.MICROSOFT_CUSTOM_REGION,
         use_custom_tts: true,
-        custom_tts_endpoint: process.env.MICROSOFT_DEPLOYMENT_ID
+        custom_tts_endpoint: process.env.MICROSOFT_DEPLOYMENT_ID,
       },
       language: 'en-US',
       voice: process.env.MICROSOFT_CUSTOM_VOICE,
-      text
+      text,
     });
     t.ok(!opts.servedFromCache, `successfully synthesized microsoft audio to ${opts.filePath}`);
 
@@ -197,15 +196,14 @@ test('Azure custom voice speech synth tests', async(t) => {
         api_key: process.env.MICROSOFT_CUSTOM_API_KEY,
         region: process.env.MICROSOFT_CUSTOM_REGION,
         use_custom_tts: true,
-        custom_tts_endpoint: process.env.MICROSOFT_DEPLOYMENT_ID
+        custom_tts_endpoint: process.env.MICROSOFT_DEPLOYMENT_ID,
       },
       language: 'en-US',
       voice: process.env.MICROSOFT_CUSTOM_VOICE,
-      text
+      text,
     });
     t.ok(opts.servedFromCache, `successfully retrieved microsoft custom voice audio from cache ${opts.filePath}`);
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
     t.end(err);
   }
@@ -225,11 +223,11 @@ test('Nuance speech synth tests', async(t) => {
       vendor: 'nuance',
       credentials: {
         client_id: process.env.NUANCE_CLIENT_ID,
-        secret: process.env.NUANCE_SECRET
+        secret: process.env.NUANCE_SECRET,
       },
       language: 'en-US',
       voice: 'Evan',
-      text: 'This is a test.  This is only a test'
+      text: 'This is a test.  This is only a test',
     });
     t.ok(!opts.servedFromCache, `successfully synthesized nuance audio to ${opts.filePath}`);
 
@@ -237,15 +235,14 @@ test('Nuance speech synth tests', async(t) => {
       vendor: 'nuance',
       credentials: {
         client_id: process.env.NUANCE_CLIENT_ID,
-        secret: process.env.NUANCE_SECRET
+        secret: process.env.NUANCE_SECRET,
       },
       language: 'en-US',
       voice: 'Evan',
-      text: 'This is a test.  This is only a test'
+      text: 'This is a test.  This is only a test',
     });
     t.ok(opts.servedFromCache, `successfully retrieved nuance audio from cache ${opts.filePath}`);
-  }
-  catch (err) {
+  } catch (err) {
     console.error(err);
     t.end(err);
   }
@@ -266,11 +263,11 @@ test('IBM watson speech synth tests', async(t) => {
       vendor: 'ibm',
       credentials: {
         tts_api_key: process.env.IBM_TTS_API_KEY,
-        tts_region: process.env.IBM_TTS_REGION
+        tts_region: process.env.IBM_TTS_REGION,
       },
       language: 'en-US',
       voice: 'en-US_AllisonV2Voice',
-      text
+      text,
     });
     t.ok(!opts.servedFromCache, `successfully synthesized ibm audio to ${opts.filePath}`);
 
@@ -278,15 +275,14 @@ test('IBM watson speech synth tests', async(t) => {
       vendor: 'ibm',
       credentials: {
         tts_api_key: process.env.IBM_TTS_API_KEY,
-        tts_region: process.env.IBM_TTS_REGION
+        tts_region: process.env.IBM_TTS_REGION,
       },
       language: 'en-US',
       voice: 'en-US_AllisonV2Voice',
-      text
+      text,
     });
     t.ok(opts.servedFromCache, `successfully retrieved ibm audio from cache ${opts.filePath}`);
-  }
-  catch (err) {
+  } catch (err) {
     console.error(JSON.stringify(err));
     t.end(err);
   }
@@ -303,8 +299,8 @@ test('TTS Cache tests', async(t) => {
     for (const i in Array(minRecords).fill(0)) {
       await client.setAsync(makeSynthKey({vendor: i, language: i, voice: i, engine: i, text: i}), i);
     }
-    const purged = await purgeTtsCache();
-    t.ok(purged >= minRecords, `successfully purged at least ${minRecords} tts records from cache`);
+    const {purgedCount} = await purgeTtsCache();
+    t.ok(purgedCount >= minRecords, `successfully purged at least ${minRecords} tts records from cache`);
 
     const cached = (await client.keysAsync('tts:*')).length;
     t.equal(cached, 0, `successfully purged all tts records from cache`);
@@ -323,8 +319,18 @@ test('TTS Cache tests', async(t) => {
     const opts = {vendor: 'aws', language: 'en-US', voice: 'MALE', engine: 'Engine', text: 'Hello World!'};
     await client.setAsync(makeSynthKey(opts), opts.text);
 
-    const purged = await purgeTtsCache({all: false, ...opts});
-    t.ok(purged === 1, `successfully purged one specific tts record from cache`);
+    const {purgedCount} = await purgeTtsCache({all: false, ...opts});
+    t.ok(purgedCount === 1, `successfully purged one specific tts record from cache`);
+
+    // returns error for unknown key
+    const {purgedCount: purgedCountWhenErrored, error} = await purgeTtsCache({
+      all: false,
+      vendor: 'non-existing',
+      language: 'non-existing',
+      voice: 'non-existing',
+    });
+    t.ok(purgedCountWhenErrored === 0, `purged no records when specified key was not found`);
+    t.ok(error, `error returned when specified key was not found`);
 
     // make sure other tts keys are still there
     const cached = (await client.keysAsync('tts:*')).length;
