@@ -249,6 +249,43 @@ test('Nuance speech synth tests', async(t) => {
   client.quit();
 });
 
+test('Nvidia speech synth tests', async(t) => {
+  const fn = require('..');
+  const {synthAudio, client} = fn(opts, logger);
+
+  if (!process.env.RIVA_URI) {
+    t.pass('skipping Nvidia speech synth tests since RIVA_URI not provided');
+    return t.end();
+  }
+  try {
+    let opts = await synthAudio(stats, {
+      vendor: 'nvidia',
+      credentials: {
+        riva_uri: process.env.RIVA_URI,
+      },
+      language: 'en-US',
+      voice: 'English-US.Female-1',
+      text: 'This is a test.  This is only a test',
+    });
+    t.ok(!opts.servedFromCache, `successfully synthesized nuance audio to ${opts.filePath}`);
+
+    opts = await synthAudio(stats, {
+      vendor: 'nvidia',
+      credentials: {
+        riva_uri: process.env.RIVA_URI,
+      },
+      language: 'en-US',
+      voice: 'English-US.Female-1',
+      text: 'This is a test.  This is only a test',
+    });
+    t.ok(opts.servedFromCache, `successfully retrieved nuance audio from cache ${opts.filePath}`);
+  } catch (err) {
+    console.error(err);
+    t.end(err);
+  }
+  client.quit();
+});
+
 test('IBM watson speech synth tests', async(t) => {
   const fn = require('..');
   const {synthAudio, client} = fn(opts, logger);
