@@ -20,10 +20,10 @@
   "homepage": "https://github.com/jambonz/realtimedb-helpers#readme",
   "license": "MIT",
   "dependencies": {
+    "@aws-sdk/client-polly": "^3.269.0",
     "@google-cloud/text-to-speech": "^4.1.0",
     "@grpc/grpc-js": "^1.8.8",
     "@jambonz/promisify-redis": "^0.0.6",
-    "aws-sdk": "^2.1313.0",
     "bent": "^7.3.12",
     "debug": "^4.3.4",
     "form-urlencoded": "^6.1.0",
