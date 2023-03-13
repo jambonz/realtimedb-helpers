@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-polly": "^3.276.0",
-    "@google-cloud/text-to-speech": "^4.1.0",
+    "@google-cloud/text-to-speech": "^4.2.1",
     "@grpc/grpc-js": "^1.8.8",
     "@jambonz/promisify-redis": "^0.0.6",
     "bent": "^7.3.12",
