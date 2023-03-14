@@ -29,8 +29,6 @@ module.exports = (opts, logger) => {
     listCalls: require('./lib/list-calls').bind(null, client, logger),
     listQueues: require('./lib/list-queues').bind(null, client, logger),
     purgeCalls: require('./lib/purge-calls').bind(null, client, logger),
-    purgeTtsCache: require('./lib/purge-tts-cache').bind(null, client, logger),
-    synthAudio: require('./lib/synth-audio').bind(null, client, logger),
     createSet: require('./lib/set/create-set').bind(null, client, logger),
     addToSet: require('./lib/set/add-to-set').bind(null, client, logger),
     removeFromSet: require('./lib/set/remove-from-set').bind(null, client, logger),
@@ -50,8 +48,5 @@ module.exports = (opts, logger) => {
     getListPosition: require('./lib/list/position').bind(null, client, logger),
     popFront: require('./lib/list/pop-front').bind(null, client, logger),
     removeFromList: require('./lib/list/remove').bind(null, client, logger),
-    getNuanceAccessToken: require('./lib/get-nuance-access-token').bind(null, client, logger),
-    getIbmAccessToken: require('./lib/get-ibm-access-token').bind(null, client, logger),
-    getTtsVoices: require('./lib/get-tts-voices').bind(null, client, logger),
   };
 };
