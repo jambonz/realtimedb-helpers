@@ -94,10 +94,13 @@ test('calls tests', async(t) => {
     status = await updateCallStatus({
       callSid: 'callSid-3',
       accountSid: 'account-1',
+      direction: 'inbound',
+      from: '111',
+      to: '222',
       applicationSid: null,
       callId: 'xxxx',
       sipStatus: 100,
-      callStatus: 'trying'
+      callStatus: 'completed'
     }, 'http://127.0.0.1:3000');
     t.ok(status, 'successfully adds third new call');
 
@@ -112,6 +115,21 @@ test('calls tests', async(t) => {
 
     let calls = await listCalls('account-1');
     t.ok(calls.length === 3, 'successfully listed all calls');
+
+    calls = await listCalls({ accountSid: 'account-1' });
+    t.ok(calls.length === 3, 'successfully listed all calls with opts');
+
+    calls = await listCalls({ accountSid: 'account-1', callStatus: 'completed' });
+    t.ok(calls.length === 1, 'successfully listed filtered completed calls');
+
+    calls = await listCalls({ accountSid: 'account-1', from: '111' });
+    t.ok(calls.length === 1, 'successfully listed filtered calls from "111"');
+
+    calls = await listCalls({ accountSid: 'account-1', to: '222' });
+    t.ok(calls.length === 1, 'successfully listed filtered calls to "222"');
+
+    calls = await listCalls({ accountSid: 'account-1', direction: 'inbound' });
+    t.ok(calls.length === 1, 'successfully listed filtered inbound calls');
 
     let result = await deleteCall('account-1', 'callSid-2');
     t.ok(result === true, 'successfully deleted callSid-2');
