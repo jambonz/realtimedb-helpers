@@ -141,14 +141,14 @@ test('calls tests', async(t) => {
     t.ok(count === 0, 'no calls purged');
 
     // force age out by removing key
-    count = await client.delAsync(`call:account-1:callSid-3`);
+    count = await client.del(`call:account-1:callSid-3`);
     t.ok(count === 1, 'forced call 3 to age out');
 
     count = await purgeCalls();
     t.ok(count === 1, '1 call purged');
 
 
-    await client.flushallAsync();
+    await client.flushall();
 
     for( let i = 0; i < 1000; i++) {
       await updateCallStatus({
@@ -170,7 +170,7 @@ test('calls tests', async(t) => {
     calls = await listCalls('account-1');
     t.ok(calls.length === 1000, 'successfully retrieved all 1,000 calls');
 
-    await client.flushallAsync();
+    await client.flushall();
 
     t.end();
 

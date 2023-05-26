@@ -54,7 +54,7 @@ test('hash tests', async(t) => {
     result = await deleteKey('ckey');
     t.ok(result === false, 'delete of unknown key failed  - connecting with auth');
 
-    await client.flushallAsync();
+    await client.flushall();
 
     t.end();
 
