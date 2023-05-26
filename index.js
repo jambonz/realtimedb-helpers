@@ -1,5 +1,5 @@
 const {noopLogger} = require('./lib/utils');
-const Redis = require("ioredis");
+const Redis = require('ioredis');
 
 module.exports = (opts, logger) => {
   logger = logger || noopLogger;
@@ -16,7 +16,7 @@ module.exports = (opts, logger) => {
       connectionOpts.password = process.env.JAMBONES_REDIS_PASSWORD;
     }
   }
-  
+
   const client = new Redis(connectionOpts);
   ['ready', 'connect', 'reconnecting', 'error', 'end', 'warning']
     .forEach((event) => {
