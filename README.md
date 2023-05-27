@@ -27,16 +27,16 @@ const logger = require('pino')();
 const {updateCallStatus} = require('jambonz-realtimedb-helpers')(opts, logger);
 ```
 
-If redis cluster is used:
+If redis Sentinel is used:
 ```
-const opts = [{
-  "host": "localhost",
-  "port": 3279
-},
-{
-  "host": "localhost",
-  "port": 3280
-}];
+const opts = {
+  sentinels: [
+    { host: '54.53.52.51', port: 6379 },
+    { host: '54.53.52.52', port: 6379 },
+    { host: '54.53.52.53', port: 6379 },
+  ],
+  name: 'masterNodeName',
+};
 const logger = require('pino')();
 const {updateCallStatus} = require('jambonz-realtimedb-helpers')(opts, logger);
 ```
