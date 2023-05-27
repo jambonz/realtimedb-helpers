@@ -5,10 +5,37 @@ A set of helper functions to access data in the jambonz in-memory database (curr
 
 This module exposes a function that should be called with redis [configuration options](https://github.com/NodeRedis/node_redis#rediscreateclient) and, optionally, a [pino](https://www.npmjs.com/package/pino) logger function.  It then returns an object containing various useful functions for accessing and updating the database.
 
+If standalone redis is used:
 ```
 const opts = {
   "host": "localhost",
   "port": 3279
+};
+const logger = require('pino')();
+const {updateCallStatus} = require('jambonz-realtimedb-helpers')(opts, logger);
+```
+
+If redis with authentication is used:
+```
+const opts = {
+  "host": "localhost",
+  "port": 3279,
+  "username": "daveh",
+  "password": "password"
+};
+const logger = require('pino')();
+const {updateCallStatus} = require('jambonz-realtimedb-helpers')(opts, logger);
+```
+
+If redis Sentinel is used:
+```
+const opts = {
+  sentinels: [
+    { host: '54.53.52.51', port: 6379 },
+    { host: '54.53.52.52', port: 6379 },
+    { host: '54.53.52.53', port: 6379 },
+  ],
+  name: 'masterNodeName',
 };
 const logger = require('pino')();
 const {updateCallStatus} = require('jambonz-realtimedb-helpers')(opts, logger);
