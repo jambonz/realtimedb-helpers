@@ -9,7 +9,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 test('sorted set', async (t) => {
   const fn = require('..');
-  const {addToSortedSet, retrieveSortedSet, sortedSetLength, retrieveByPatternSortedSet, client} = fn(opts);
+  const {addToSortedSet, retrieveFromSortedSet, sortedSetLength, retrieveByPatternSortedSet, client} = fn(opts);
   try {
     const setName = 'tasks';
     let result = await addToSortedSet(setName, 'url1', 99);
@@ -35,15 +35,15 @@ test('sorted set', async (t) => {
     result = await retrieveByPatternSortedSet(setName, '*url5*');
     t.ok(result.length === 0, 'successfully get sorted set by pattern');
 
-    result = await retrieveSortedSet(setName);
+    result = await retrieveFromSortedSet(setName);
     t.ok(result === 'url2', 'successfully get priotized item');
-    result = await retrieveSortedSet(setName);
+    result = await retrieveFromSortedSet(setName);
     t.ok(result === 'url3', 'successfully get priotized item');
-    result = await retrieveSortedSet(setName);
+    result = await retrieveFromSortedSet(setName);
     t.ok(result === 'url1', 'successfully get priotized item');
-    result = await retrieveSortedSet(setName);
+    result = await retrieveFromSortedSet(setName);
     t.ok(result === 'url4', 'successfully get priotized item');
-    result = await retrieveSortedSet(setName);
+    result = await retrieveFromSortedSet(setName);
     t.ok(result === undefined, 'successfully get priotized item');
   }
   catch (err) {
