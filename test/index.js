@@ -6,4 +6,5 @@ require('./hash');
 require('./key');
 require('./queues');
 require('./auth');
+require('./sorted-set');
 require('./docker_stop');

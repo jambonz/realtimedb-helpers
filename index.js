@@ -56,5 +56,9 @@ module.exports = (opts, logger) => {
     getListPosition: require('./lib/list/position').bind(null, client, logger),
     popFront: require('./lib/list/pop-front').bind(null, client, logger),
     removeFromList: require('./lib/list/remove').bind(null, client, logger),
+    addToSortedSet: require('./lib/sorted-set/add-to-sorted-set').bind(null, client, logger),
+    retrieveFromSortedSet: require('./lib/sorted-set/retrieve-sorted-set').bind(null, client, logger),
+    sortedSetLength: require('./lib/sorted-set/sorted-set-length').bind(null, client, logger),
+    retrieveByPatternSortedSet: require('./lib/sorted-set/retrieve-by-pattern-sorted-set').bind(null, client, logger),
   };
 };
