@@ -60,5 +60,6 @@ module.exports = (opts, logger) => {
     retrieveFromSortedSet: require('./lib/sorted-set/retrieve-sorted-set').bind(null, client, logger),
     sortedSetLength: require('./lib/sorted-set/sorted-set-length').bind(null, client, logger),
     retrieveByPatternSortedSet: require('./lib/sorted-set/retrieve-by-pattern-sorted-set').bind(null, client, logger),
+    sortedSetPositionByPattern: require('./lib/sorted-set/sorted-set-position').bind(null, client, logger),
   };
 };

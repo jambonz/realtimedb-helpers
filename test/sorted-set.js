@@ -9,7 +9,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 test('sorted set', async (t) => {
   const fn = require('..');
-  const {addToSortedSet, retrieveFromSortedSet, sortedSetLength, retrieveByPatternSortedSet, client} = fn(opts);
+  const {addToSortedSet, retrieveFromSortedSet, sortedSetLength, retrieveByPatternSortedSet, sortedSetPositionByPattern, client} = fn(opts);
   try {
     const setName = 'tasks';
     let result = await addToSortedSet(setName, 'url1', 99);
@@ -27,6 +27,11 @@ test('sorted set', async (t) => {
 
     result = await sortedSetLength(setName);
     t.ok(result === 6, 'successfully get sorted set length');
+
+    result = await sortedSetPositionByPattern(setName, '*url3');
+    t.ok(result[0] === 1, 'successfully positioning element')
+    result = await sortedSetPositionByPattern(setName, '*url1');
+    t.ok(result[0] === 2, 'successfully positioning element')
 
     result = await retrieveByPatternSortedSet(setName, '*url5*');
     t.ok(result[0] === 'url5', 'successfully get sorted set by pattern');
