@@ -164,7 +164,7 @@ test('calls tests', async(t) => {
     count = await purgeCalls();
     t.ok(count === 0, 'no calls purged');
   
-    const [res1, res2] = await Promise.all([purgeCalls(), new Promise(resolve => setTimeout(resolve, 100)).then(() => purgeCalls())]);
+    const [res1, res2] = await Promise.all([purgeCalls(), new Promise(resolve => setTimeout(resolve, 10)).then(() => purgeCalls())]);
     t.ok(res1 === 0 && res2 == undefined, 'successfully handle simultaneous purgeCalls run');
 
     calls = await listCalls('account-1');
