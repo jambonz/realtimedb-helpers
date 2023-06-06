@@ -1,10 +1,19 @@
 version: '3'
+networks:
+  redis_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.40.0.0/16
 
 services:
   redis:
     image: redis:alpine
     ports:
       - "3379:6379"
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.5
 
   redis-auth:
     image: redis:alpine
@@ -13,3 +22,114 @@ services:
       - "3380:6379"
     volumes:
       - ./tmp:/tmp
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.6
+  # Redis sentinel
+  redis-master:
+    image: redis:alpine
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.10
+
+  redis-slave1:
+    image: redis:alpine
+    command: redis-server --slaveof 172.40.0.10 6379
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.11
+
+  redis-slave2:
+    image: redis:alpine
+    command: redis-server --slaveof 172.40.0.10 6379
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.12
+
+  sentinel1:
+    image: redis:alpine
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.13
+
+  sentinel2:
+    image: redis:alpine
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.14
+
+  sentinel3:
+    image: redis:alpine
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.15
+  
+  # Redis sentinel auth
+  redis-master-auth:
+    image: redis:alpine 
+    command: redis-server --requirepass foobarbazzle
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.20
+
+  redis-slave1-auth:
+    image: redis:alpine
+    command: redis-server --slaveof 172.40.0.20 6379 --masterauth foobarbazzle --requirepass foobarbazzle
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.21
+
+  redis-slave2-auth:
+    image: redis:alpine
+    command: redis-server --slaveof 172.40.0.20 6379 --masterauth foobarbazzle --requirepass foobarbazzle
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.22
+
+  sentinel1-auth:
+    image: redis:alpine
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel-auth.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master-auth
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.23
+
+  sentinel2-auth:
+    image: redis:alpine
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel-auth.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master-auth
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.24
+
+  sentinel3-auth:
+    image: redis:alpine
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+    volumes:
+      - ./sentinel-auth.conf:/usr/local/etc/redis/sentinel.conf
+    depends_on:
+      - redis-master-auth
+    networks:
+      redis_net:
+        ipv4_address: 172.40.0.25

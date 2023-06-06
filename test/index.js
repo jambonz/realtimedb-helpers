@@ -7,4 +7,5 @@ require('./key');
 require('./queues');
 require('./auth');
 require('./sorted-set');
+require('./sentinal');
 require('./docker_stop');
