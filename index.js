@@ -1,20 +1,40 @@
 const {noopLogger} = require('./lib/utils');
 const Redis = require('ioredis');
 
+const JAMBONES_REDIS_CONFIGURATION = process.env.JAMBONES_REDIS_SENTINELS ? {
+  sentinels: process.env.JAMBONES_REDIS_SENTINELS.split(',').map((sentinel) => {
+    let host, port = 26379;
+    if (sentinel.includes(':')) {
+      const arr = sentinel.split(':');
+      host = arr[0];
+      port = parseInt(arr[1], 10);
+    } else {
+      host = sentinel;
+    }
+    return {host, port};
+  }),
+  name: process.env.JAMBONES_REDIS_SENTINEL_MASTER_NAME,
+  ...(process.env.JAMBONES_REDIS_SENTINEL_PASSWORD && {
+    password: process.env.JAMBONES_REDIS_SENTINEL_PASSWORD
+  }),
+  ...(process.env.JAMBONES_REDIS_SENTINEL_USERNAME && {
+    username: process.env.JAMBONES_REDIS_SENTINEL_USERNAME
+  }),
+  ...(process.env.JAMBONES_REDIS_SENTINEL_SERVER_PASSWORD && {
+    sentinelPassword: process.env.JAMBONES_REDIS_SENTINEL_SERVER_PASSWORD
+  }),
+} : {
+  host: process.env.JAMBONES_REDIS_HOST || 'localhost',
+  port: process.env.JAMBONES_REDIS_PORT || 6379
+};
+
 module.exports = (opts, logger) => {
   logger = logger || noopLogger;
-  const connectionOpts = {...opts};
+  const connectionOpts = (!!opts && Object.keys(opts).length > 0) ? {...opts} : JAMBONES_REDIS_CONFIGURATION;
   // Support legacy app
   if (process.env.JAMBONES_REDIS_USERNAME && process.env.JAMBONES_REDIS_PASSWORD) {
-    if (Array.isArray(connectionOpts)) {
-      for (const o of opts) {
-        o.username = process.env.JAMBONES_REDIS_USERNAME;
-        o.password = process.env.JAMBONES_REDIS_PASSWORD;
-      }
-    } else {
-      connectionOpts.username = process.env.JAMBONES_REDIS_USERNAME;
-      connectionOpts.password = process.env.JAMBONES_REDIS_PASSWORD;
-    }
+    connectionOpts.username = process.env.JAMBONES_REDIS_USERNAME;
+    connectionOpts.password = process.env.JAMBONES_REDIS_PASSWORD;
   }
 
   const client = new Redis(connectionOpts);
