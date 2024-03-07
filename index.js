@@ -1,7 +1,8 @@
 const {noopLogger} = require('./lib/utils');
 const Redis = require('ioredis');
+const fs = require('fs');
 
-const JAMBONES_REDIS_CONFIGURATION = process.env.JAMBONES_REDIS_SENTINELS ? {
+let JAMBONES_REDIS_CONFIGURATION = process.env.JAMBONES_REDIS_SENTINELS ? {
   sentinels: process.env.JAMBONES_REDIS_SENTINELS.split(',').map((sentinel) => {
     let host, port = 26379;
     if (sentinel.includes(':')) {
@@ -27,6 +28,22 @@ const JAMBONES_REDIS_CONFIGURATION = process.env.JAMBONES_REDIS_SENTINELS ? {
   host: process.env.JAMBONES_REDIS_HOST || 'localhost',
   port: process.env.JAMBONES_REDIS_PORT || 6379
 };
+if (process.env.ENABLE_JAMBONES_REDIS_TLS) {
+  JAMBONES_REDIS_CONFIGURATION = {
+    ...JAMBONES_REDIS_CONFIGURATION,
+    tls: {
+      ...(process.env.JAMBONES_REDIS_TLS_CA_FILE && {
+        ca: fs.readFileSync(process.env.JAMBONES_REDIS_TLS_CA_FILE)}),
+      ...(process.env.JAMBONES_REDIS_TLS_KEY_FILE && {
+        key: fs.readFileSync(process.env.JAMBONES_REDIS_TLS_KEY_FILE)
+      }),
+      ...(process.env.JAMBONES_REDIS_TLS_CERT_FILE && {
+        cert: fs.readFileSync(process.env.JAMBONES_REDIS_TLS_CERT_FILE)
+      })
+    }
+  };
+}
+
 
 module.exports = (opts, logger) => {
   logger = logger || noopLogger;
