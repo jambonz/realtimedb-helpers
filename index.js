@@ -1,4 +1,4 @@
-const {noopLogger} = require('./lib/utils');
+const {noopLogger, makePatternForConferenceScan} = require('./lib/utils');
 const Redis = require('ioredis');
 const fs = require('fs');
 
@@ -68,6 +68,7 @@ module.exports = (opts, logger) => {
     deleteCall: require('./lib/delete-call').bind(null, client, logger),
     listCalls: require('./lib/list-calls').bind(null, client, logger),
     listQueues: require('./lib/list-queues').bind(null, client, logger),
+    listConferences: require('./lib/hash/list-hash').bind(null, client, logger, makePatternForConferenceScan, 'conf'),
     purgeCalls: require('./lib/purge-calls').bind(null, client, logger),
     createSet: require('./lib/set/create-set').bind(null, client, logger),
     addToSet: require('./lib/set/add-to-set').bind(null, client, logger),
