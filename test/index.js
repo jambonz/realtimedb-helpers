@@ -5,6 +5,7 @@ require('./set');
 require('./hash');
 require('./key');
 require('./queues');
+require('./conference');
 require('./auth');
 require('./sorted-set');
 require('./sorted-set-queues');
