@@ -1,6 +1,6 @@
 {
   "name": "@jambonz/realtimedb-helpers",
-  "version": "0.8.9",
+  "version": "0.8.10",
   "description": "utility functions for querying jambonz redis database",
   "main": "index.js",
   "scripts": {
