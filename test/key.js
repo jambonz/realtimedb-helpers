@@ -16,7 +16,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 test('key tests', async(t) => {
   const fn = require('..');
-  const {addKey, addKeyNx, deleteKey, retrieveKey, incrKey, decrKey, client} = fn(opts);
+  const {addKey, addKeyNx, deleteKey, retrieveKey, incrKey, decrKey, decrKeyIfExists, client} = fn(opts);
 
   try {
     let result = await addKey('akey', 'value');
@@ -49,8 +49,19 @@ test('key tests', async(t) => {
     result = await decrKey('mykey');
     t.ok(result === 1, 'decrKey works properly when key exists');
   
+    result = await decrKeyIfExists('mykey')
+    t.ok(result === 0, 'decrKeyIfExists works properly when key exists');
+
     result = await decrKey('nokey');
     t.ok(result === -1, 'decrKey returns -1 when key did not exist');
+    // Delete key again, because DECR command creates key if it does not exists
+    await deleteKey('nokey')
+    
+    result = await decrKeyIfExists('nokey');
+    t.ok(result === 0, 'decrKeyIfExists returns 0 when key did not exist')
+    
+    result = await retrieveKey('nokey')
+    t.ok(result === null, 'decrKeyIfExists does not create a key when key did not exist')
 
     result = await incrKey('mykey-now', 1);
     t.ok(result === 1, 'incrKey increments key with expires');
