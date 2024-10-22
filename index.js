@@ -1,39 +1,40 @@
-const {noopLogger, makePatternForConferenceScan} = require('./lib/utils');
+const { noopLogger, makePatternForConferenceScan, buildSentinels } = require('./lib/utils');
 const Redis = require('ioredis');
 const fs = require('fs');
 
-let JAMBONES_REDIS_CONFIGURATION = process.env.JAMBONES_REDIS_SENTINELS ? {
-  sentinels: process.env.JAMBONES_REDIS_SENTINELS.split(',').map((sentinel) => {
-    let host, port = 26379;
-    if (sentinel.includes(':')) {
-      const arr = sentinel.split(':');
-      host = arr[0];
-      port = parseInt(arr[1], 10);
-    } else {
-      host = sentinel;
-    }
-    return {host, port};
-  }),
-  name: process.env.JAMBONES_REDIS_SENTINEL_MASTER_NAME,
-  ...(process.env.JAMBONES_REDIS_SENTINEL_PASSWORD && {
-    password: process.env.JAMBONES_REDIS_SENTINEL_PASSWORD
-  }),
-  ...(process.env.JAMBONES_REDIS_SENTINEL_USERNAME && {
-    username: process.env.JAMBONES_REDIS_SENTINEL_USERNAME
-  }),
-  ...(process.env.JAMBONES_REDIS_SENTINEL_SERVER_PASSWORD && {
-    sentinelPassword: process.env.JAMBONES_REDIS_SENTINEL_SERVER_PASSWORD
-  }),
-} : {
+let JAMBONES_REDIS_CONFIGURATION = {
   host: process.env.JAMBONES_REDIS_HOST || 'localhost',
   port: process.env.JAMBONES_REDIS_PORT || 6379
 };
+
+let mode = 'single';
+
+if (process.env.JAMBONES_REDIS_SENTINELS) {
+  mode = 'high availability';
+  JAMBONES_REDIS_CONFIGURATION = {
+    name: process.env.JAMBONES_REDIS_SENTINEL_MASTER_NAME,
+    host: undefined,
+    port: undefined,
+    sentinels: buildSentinels(),
+    ...(process.env.JAMBONES_REDIS_SENTINEL_USERNAME && {
+      username: process.env.JAMBONES_REDIS_SENTINEL_USERNAME
+    }),
+    ...(process.env.JAMBONES_REDIS_SENTINEL_PASSWORD && {
+      password: process.env.JAMBONES_REDIS_SENTINEL_PASSWORD
+    }),
+    ...(process.env.JAMBONES_REDIS_SENTINEL_SERVER_PASSWORD && {
+      sentinelPassword: process.env.JAMBONES_REDIS_SENTINEL_SERVER_PASSWORD
+    }),
+  }
+}
+
 if (process.env.ENABLE_JAMBONES_REDIS_TLS) {
   JAMBONES_REDIS_CONFIGURATION = {
     ...JAMBONES_REDIS_CONFIGURATION,
     tls: {
       ...(process.env.JAMBONES_REDIS_TLS_CA_FILE && {
-        ca: fs.readFileSync(process.env.JAMBONES_REDIS_TLS_CA_FILE)}),
+        ca: fs.readFileSync(process.env.JAMBONES_REDIS_TLS_CA_FILE)
+      }),
       ...(process.env.JAMBONES_REDIS_TLS_KEY_FILE && {
         key: fs.readFileSync(process.env.JAMBONES_REDIS_TLS_KEY_FILE)
       }),
@@ -47,7 +48,7 @@ if (process.env.ENABLE_JAMBONES_REDIS_TLS) {
 
 module.exports = (opts, logger) => {
   logger = logger || noopLogger;
-  const connectionOpts = (!!opts && Object.keys(opts).length > 0) ? {...opts} : JAMBONES_REDIS_CONFIGURATION;
+  const connectionOpts = (!!opts && Object.keys(opts).length > 0) ? { ...opts } : JAMBONES_REDIS_CONFIGURATION;
 
   const client = new Redis(connectionOpts);
   ['ready', 'connect', 'reconnecting', 'error', 'end', 'warning']
@@ -55,9 +56,12 @@ module.exports = (opts, logger) => {
       client.on(event, (...args) => {
         if ('error' === event) {
           if (process.env.NODE_ENV === 'test' && args[0]?.code === 'ECONNREFUSED') return;
-          logger.error({...args}, '@jambonz/realtimedb-helpers - redis error');
+          logger.error({ ...args }, '@jambonz/realtimedb-helpers - redis error');
         }
-        else logger.debug({args}, `redis event ${event}`);
+        else if ('connect' === event) {
+          logger.info(`Successfully connected to Redis ${mode} mode`);
+        }
+        else logger.debug({ args }, `redis event ${event}`);
       });
     });
 
