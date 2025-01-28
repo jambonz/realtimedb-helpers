@@ -28,7 +28,7 @@ let JAMBONES_REDIS_CONFIGURATION = process.env.JAMBONES_REDIS_SENTINELS ? {
   host: process.env.JAMBONES_REDIS_HOST || 'localhost',
   port: process.env.JAMBONES_REDIS_PORT || 6379,
   ...(process.env.JAMBONES_REDIS_USERNAME && {username: process.env.JAMBONES_REDIS_USERNAME}),
-	...(process.env.JAMBONES_REDIS_PASSWORD && {password: process.env.JAMBONES_REDIS_PASSWORD}),
+  ...(process.env.JAMBONES_REDIS_PASSWORD && {password: process.env.JAMBONES_REDIS_PASSWORD}),
 };
 if (process.env.ENABLE_JAMBONES_REDIS_TLS) {
   JAMBONES_REDIS_CONFIGURATION = {
