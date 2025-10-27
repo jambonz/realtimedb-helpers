@@ -85,6 +85,7 @@ module.exports = (opts, logger) => {
     createHash: require('./lib/hash/create-hash').bind(null, client, logger),
     retrieveHash: require('./lib/hash/retrieve-hash').bind(null, client, logger),
     createEphemeralGateway: require('./lib/hash/create-ephemeral-gateway').bind(null, client, logger),
+    deleteEphemeralGateway: require('./lib/hash/delete-ephemeral-gateway').bind(null, client, logger),
     queryEphemeralGateways: require('./lib/hash/query-ephemeral-gateways').bind(null, client, logger),
     addKey: require('./lib/key/add-key').bind(null, client, logger),
     addKeyNx: require('./lib/key/add-key-nx').bind(null, client, logger),
