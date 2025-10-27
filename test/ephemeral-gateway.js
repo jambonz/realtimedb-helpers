@@ -14,7 +14,7 @@ function sleep(secs) {
 
 test('ephemeral gateway tests', async(t) => {
   const fn = require('..');
-  const {createEphemeralGateway, queryEphemeralGateways, retrieveHash, deleteKey, client} = fn(opts);
+  const {createEphemeralGateway, queryEphemeralGateways, retrieveHash, deleteKey, deleteEphemeralGateway, client} = fn(opts);
 
   try {
     const ipAddress = 'beachdog.sip.jambonz.cloud';
@@ -87,6 +87,31 @@ test('ephemeral gateway tests', async(t) => {
     hash = await retrieveHash(key);
     t.ok(!hash[expiredCarrierSid], 'expired entry was removed from Redis');
     t.ok(hash[voipCarrierSid] && hash[voipCarrierSid2], 'active entries remain in Redis');
+
+    // Test delete ephemeral gateway - single carrier
+    let deleteResult = await deleteEphemeralGateway(ipAddress, voipCarrierSid);
+    t.ok(deleteResult === true, 'successfully deleted single carrier');
+
+    hash = await retrieveHash(key);
+    t.ok(!hash[voipCarrierSid], 'deleted carrier no longer exists in hash');
+    t.ok(hash[voipCarrierSid2], 'other carrier still exists in hash');
+
+    carriers = await queryEphemeralGateways(ipAddress);
+    t.ok(carriers.length === 1 && carriers[0] === voipCarrierSid2, 'query returns only remaining carrier');
+
+    // Test delete non-existent carrier
+    deleteResult = await deleteEphemeralGateway(ipAddress, 'non-existent-carrier');
+    t.ok(deleteResult === false, 'deleting non-existent carrier returns false');
+
+    // Test delete last remaining carrier (should clean up key)
+    deleteResult = await deleteEphemeralGateway(ipAddress, voipCarrierSid2);
+    t.ok(deleteResult === true, 'successfully deleted last carrier');
+
+    hash = await retrieveHash(key);
+    t.ok(hash === null, 'key was cleaned up after deleting last carrier');
+
+    carriers = await queryEphemeralGateways(ipAddress);
+    t.ok(Array.isArray(carriers) && carriers.length === 0, 'query returns empty array after all carriers deleted');
 
     // Clean up
     await deleteKey(key);
