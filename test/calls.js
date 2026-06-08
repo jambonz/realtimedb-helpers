@@ -14,7 +14,7 @@ process.on('unhandledRejection', (reason, p) => {
 
 test('calls tests', async(t) => {
   const fn = require('..');
-  const {updateCallStatus, retrieveCall, deleteCall, listCalls, purgeCalls, client} = fn(opts);
+  const {updateCallStatus, retrieveCall, deleteCall, listCalls, purgeCalls, client, addKey, getCallCount} = fn(opts);
 
   //wait 1 sec for connection
   //await sleep(1); 
@@ -170,6 +170,11 @@ test('calls tests', async(t) => {
 
     calls = await listCalls('account-1');
     t.ok(calls.length === 1000, 'successfully retrieved all 1,000 calls');
+
+    await addKey('incalls:account:account-1', '5')
+    let callCount = await getCallCount('account-1')
+    t.ok((callCount.inbound == 5 && callCount.outbound == 0), 'successfully listed call counts')
+
 
     await client.flushall();
 

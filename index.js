@@ -84,6 +84,9 @@ module.exports = (opts, logger) => {
     isMemberOfSet: require('./lib/set/is-member-of-set').bind(null, client, logger),
     createHash: require('./lib/hash/create-hash').bind(null, client, logger),
     retrieveHash: require('./lib/hash/retrieve-hash').bind(null, client, logger),
+    createEphemeralGateway: require('./lib/hash/create-ephemeral-gateway').bind(null, client, logger),
+    deleteEphemeralGateway: require('./lib/hash/delete-ephemeral-gateway').bind(null, client, logger),
+    queryEphemeralGateways: require('./lib/hash/query-ephemeral-gateways').bind(null, client, logger),
     addKey: require('./lib/key/add-key').bind(null, client, logger),
     addKeyNx: require('./lib/key/add-key-nx').bind(null, client, logger),
     retrieveKey: require('./lib/key/retrieve-key').bind(null, client, logger),
@@ -102,5 +105,6 @@ module.exports = (opts, logger) => {
     retrieveByPatternSortedSet: require('./lib/sorted-set/retrieve-by-pattern-sorted-set').bind(null, client, logger),
     sortedSetPositionByPattern: require('./lib/sorted-set/sorted-set-position').bind(null, client, logger),
     listSortedSets: require('./lib/sorted-set/list-sorted-sets').bind(null, client, logger),
+    getCallCount: require('./lib/call-count').bind(null, client, logger)
   };
 };

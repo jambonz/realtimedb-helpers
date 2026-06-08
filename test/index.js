@@ -3,6 +3,7 @@ require('./calls');
 require('./list');
 require('./set');
 require('./hash');
+require('./ephemeral-gateway');
 require('./key');
 require('./queues');
 require('./conference');
