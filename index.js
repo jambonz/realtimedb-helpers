@@ -61,7 +61,14 @@ module.exports = (opts, logger) => {
       client.on(event, (...args) => {
         if ('error' === event) {
           if (process.env.NODE_ENV === 'test' && args[0]?.code === 'ECONNREFUSED') return;
-          logger.error({...args}, '@jambonz/realtimedb-helpers - redis error');
+          /* never log the full error: ioredis attaches the failed command
+             (e.g. {command:{name:'auth',args:['<token>']}}), which would leak
+             the Redis AUTH token. Log only the safe message and code. */
+          const err = args[0];
+          logger.error({
+            message: err?.message,
+            code: err?.code
+          }, '@jambonz/realtimedb-helpers - redis error');
         }
         else logger.debug({args}, `redis event ${event}`);
       });
