@@ -147,6 +147,37 @@ test('calls tests', async(t) => {
     count = await purgeCalls();
     t.ok(count === 1, '1 call purged');
 
+    // TTL must follow callStatus: an answered (200) call is still live and keeps the full lifetime
+    status = await updateCallStatus({
+      callSid: 'callSid-1',
+      accountSid: 'account-1',
+      callId: 'xxxx',
+      sipStatus: 200,
+      callStatus: 'in-progress'
+    }, 'http://127.0.0.1:3000');
+    let ttl = await client.ttl('call:account-1:callSid-1');
+    t.ok(status && ttl > 60 * 60, `answered call keeps full lifetime TTL (ttl=${ttl})`);
+
+    status = await updateCallStatus({
+      callSid: 'callSid-1',
+      accountSid: 'account-1',
+      callId: 'xxxx',
+      sipStatus: 200,
+      callStatus: 'completed'
+    }, 'http://127.0.0.1:3000');
+    ttl = await client.ttl('call:account-1:callSid-1');
+    t.ok(status && ttl > 0 && ttl <= 60 * 60, `completed call gets after-completed TTL (ttl=${ttl})`);
+
+    status = await updateCallStatus({
+      callSid: 'callSid-2',
+      accountSid: 'account-1',
+      callId: 'xxxx',
+      sipStatus: 486,
+      callStatus: 'busy'
+    }, 'http://127.0.0.1:3000');
+    ttl = await client.ttl('call:account-1:callSid-2');
+    t.ok(status && ttl > 0 && ttl <= 60 * 60, `busy call gets after-completed TTL (ttl=${ttl})`);
+
 
     await client.flushall();
 
