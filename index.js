@@ -51,9 +51,18 @@ if (process.env.ENABLE_JAMBONES_REDIS_TLS) {
 }
 
 
+/* After a failover (ElastiCache Multi-AZ, sentinel) the old primary can be demoted to a
+   replica while our connection to it stays open, and every write then fails with READONLY
+   until the process restarts. Reconnecting re-resolves the endpoint, which now names the new
+   primary; returning 2 also resends the command that failed. */
+const reconnectOnReadonly = (err) => (err?.message?.startsWith('READONLY') ? 2 : false);
+
 module.exports = (opts, logger) => {
   logger = logger || noopLogger;
-  const connectionOpts = (!!opts && Object.keys(opts).length > 0) ? {...opts} : JAMBONES_REDIS_CONFIGURATION;
+  const connectionOpts = {
+    reconnectOnError: reconnectOnReadonly,
+    ...((!!opts && Object.keys(opts).length > 0) ? opts : JAMBONES_REDIS_CONFIGURATION)
+  };
 
   const client = new Redis(connectionOpts);
   ['ready', 'connect', 'reconnecting', 'error', 'end', 'warning']
@@ -61,7 +70,14 @@ module.exports = (opts, logger) => {
       client.on(event, (...args) => {
         if ('error' === event) {
           if (process.env.NODE_ENV === 'test' && args[0]?.code === 'ECONNREFUSED') return;
-          logger.error({...args}, '@jambonz/realtimedb-helpers - redis error');
+          /* never log the full error: ioredis attaches the failed command
+             (e.g. {command:{name:'auth',args:['<token>']}}), which would leak
+             the Redis AUTH token. Log only the safe message and code. */
+          const err = args[0];
+          logger.error({
+            message: err?.message,
+            code: err?.code
+          }, '@jambonz/realtimedb-helpers - redis error');
         }
         else logger.debug({args}, `redis event ${event}`);
       });

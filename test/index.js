@@ -5,6 +5,7 @@ require('./set');
 require('./hash');
 require('./ephemeral-gateway');
 require('./key');
+require('./reconnect');
 require('./queues');
 require('./conference');
 require('./auth');
